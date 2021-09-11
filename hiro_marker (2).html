@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+<!-- we import arjs version without NFT but with marker + location based support -->
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+<script>
+    AFRAME.registerComponent('registerevents', {
+        init: function () {
+            const marker = this.el;
+
+            marker.addEventListener("markerFound", () => {
+                var markerId = marker.id;
+                var indicator_name = "#Indicator_" + markerId;
+                console.log('Indicator: ', indicator_name);
+                var indicator = document.querySelector(indicator_name);
+                indicator.style.color = "white";
+                indicator.style.backgroundColor="green";
+                indicator.style.borderColor="green";
+
+                console.log('Marker Found: ', markerId);
+            });
+
+            marker.addEventListener("markerLost", () => {
+                var markerId = marker.id;
+                console.log('Marker Lost: ', markerId);
+            });
+        },
+    });
+
+    function show(shown, hidden) {
+        document.getElementById(shown).style.display='block';
+        document.getElementById(hidden).style.display='none';
+        return false;
+    }
+
+</script>
+<style>
+    #container {
+        display: flex;
+        flex-wrap: wrap;
+        /*  allow items to wrap  */
+        justify-content: center;
+        /*  horizontally center items  */
+    }
+
+    .item {
+        /*flex-basis: calc(16.666% - 20px);*/
+        /*  subtract the margin from the width  */
+        border-radius: 50%;
+        background-color: black;
+        padding: 20px;
+        margin: 10px;
+
+        background: #fff;
+        border: 2px solid rgb(255, 0, 0);
+        color: rgb(255, 1, 1);
+        text-align: center;
+        font: 20px Arial, sans-serif;
+        
+        box-sizing: border-box;
+        /*  make padding be included in the set width  */
+    }
+
+    .buttons {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 30%;
+        display: flex;
+        justify-content: center;
+        background: white;
+        align-items: center;
+        z-index: 10;
+        border-radius: 15px 15px 0 0;
+    }
+
+</style>
+
+<body style="margin : 0px; overflow: hidden;">
+    <!--UI Part-->
+    <div class="buttons">
+        <div id="container">
+            <p class="item" id="Indicator_M1">01</p>
+            <p class="item" id="Indicator_M2">02</p>
+            <p class="item" id="Indicator_M3">03</p>
+            <p class="item" id="Indicator_M4">04</p>
+            <p class="item" id="Indicator_M5">05</p>
+        </div>
+    </div>
+    <!--Camera Part-->
+    <a-scene vr-mode-ui="enabled: false" color-space="sRGB" renderer="gammaOutput: true" embedded
+        arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;'>
+        <!--Marker 1-->
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-1.patt"
+            id="M1">
+            <a-box position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
+                <a-torus-knot radius='0.26' radius-tubular='0.05' color='blue'
+                    animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                </a-torus-knot>
+            </a-box>
+        </a-marker>
+        <!--Marker 2-->
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-2.patt"
+            id="M2">
+            <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
+                <a-torus-knot radius='0.26' radius-tubular='0.05' color='blue'
+                    animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                </a-torus-knot>
+                </a-box>
+        </a-marker>
+        <!--Marker 3-->
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-3.patt"
+            id="M3">
+            <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
+                <a-torus-knot radius='0.26' radius-tubular='0.05' color='blue'
+                    animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                </a-torus-knot>
+                </a-box>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+</body>
+
+</html>
