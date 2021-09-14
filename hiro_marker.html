@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <!-- we import arjs version without NFT but with marker + location based support -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <script>
+        AFRAME.registerComponent('registerevents', {
+            init: function () {
+                const marker = this.el;
+
+                marker.addEventListener("markerFound", () => {
+                    var markerId = marker.id;
+                    var indicator_name = "#Indicator_" + markerId;
+                    console.log('Indicator: ', indicator_name);
+                    var indicator = document.querySelector(indicator_name);
+                    indicator.style.color = "white";
+                    indicator.style.backgroundColor = "green";
+                    indicator.style.borderColor = "green";
+
+                    console.log('Marker Found: ', markerId);
+                });
+
+                marker.addEventListener("markerLost", () => {
+                    var markerId = marker.id;
+                    console.log('Marker Lost: ', markerId);
+                });
+            },
+        });
+
+        function show(shown, hidden) {
+            document.getElementById(shown).style.display = 'block';
+            document.getElementById(hidden).style.display = 'none';
+            return false;
+        }
+
+        function openNav() {
+            // console.log("In Open");
+            document.getElementById("bottom-drawer").style.transform = "translateY(0em)";
+            document.getElementById("toggleslide").setAttribute('onClick',"closeNav()");
+            document.getElementById("toggleslide").innerHTML='expand_more';
+        }
+
+        function closeNav() {
+            // console.log("In Close");
+            document.getElementById("bottom-drawer").style.transform = "translateY(8em)";
+            document.getElementById("toggleslide").setAttribute('onClick',"openNav()");
+            document.getElementById("toggleslide").innerHTML='expand_less';
+        }
+
+    </script>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        .slideup {
+            -webkit-user-select: none;
+            /* Safari */
+            -ms-user-select: none;
+            /* IE 10 and IE 11 */
+            user-select: none;
+            /* Standard syntax */
+
+            justify-content: center;
+
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35%;
+            background: white;
+
+            z-index: 10;
+            border-radius: 2em 2em 0 0;
+
+            transition: 0.5s;
+
+        }
+
+        .slideup .material-icons{
+            color: gray;
+        }
+
+        .collapsebutton {
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        #container {
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-bottom: 5px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: absolute;
+
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+
+        }
+
+        /*flex-basis: calc(16.666% - 20px);*/
+        /* .item {
+            
+            border-radius: 50%;
+            background-color: white;
+            padding: 20px;
+            margin: 10px;
+
+            height: 15px;
+            width: 15px;
+
+            text-align: center;
+            border: 2px solid rgb(255, 0, 0);
+            color: rgb(255, 1, 1);
+
+            
+            font: 20px "Roboto", sans-serif;
+
+        } */
+
+        .item {
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+
+            padding: 5px;
+            margin: 10px;
+
+            background: #fff;
+            border: 3px solid red;
+            color: red;
+            text-align: center;
+            font: 25px "Roboto", sans-serif;
+        }
+
+        .cluebutton {
+            transform: translateY(-.1em);
+        }
+
+        .timerbar {
+            background: black;
+            color: white;
+            display: flex;
+
+            position: absolute;
+            height: 10%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+
+            align-items: center;
+        }
+
+        .companylogo {
+            padding: 10px;
+            margin: 10px;
+            object-fit: contain;
+            width: 7em;
+        }
+
+        .timerside {
+            right: 0;
+            position: absolute;
+            display: flex;
+
+
+            padding: 10px;
+            margin: 10px;
+        }
+
+        .timercounter {
+            font-family: 'Roboto';
+            font-size: 22px;
+        }
+
+        .material-icons {
+            color: red;
+            padding-top: 3px;
+            padding-right: .2em;
+        }
+    </style>
+</head>
+
+<body style="margin : 0px; overflow: hidden;">
+    <!--Timer Bar-->
+    <div class="timerbar">
+        <div class="companylogo">
+            <img src="resources\logo\oneplus-logo.png" style="max-width: 100%;">
+        </div>
+        <div class="timerside">
+            <span class="material-icons">timer</span>
+            <div class="timercounter">00:01</div>
+        </div>
+
+    </div>
+
+    <!--UI Part-->
+    <div class="slideup" id="bottom-drawer">
+        <div class="collapsebutton"><span class="material-icons" id="toggleslide" onclick="closeNav()">expand_more</span>
+        </div>
+        <div id="container">
+            <div class="item" id="Indicator_M1">
+                <div class="cluebutton" onclick="alert('01');">01</div>
+            </div>
+            <div class="item" id="Indicator_M2">
+                <div class="cluebutton" onclick="alert('02');">02</div>
+            </div>
+            <div class="item" id="Indicator_M3">
+                <div class="cluebutton" onclick="alert('03');">03</div>
+            </div>
+            <div class="item" id="Indicator_M4">
+                <div class="cluebutton" onclick="alert('04');">04</div>
+            </div>
+            <div class="item" id="Indicator_M5">
+                <div class="cluebutton" onclick="alert('05');">06</div>
+            </div>
+            <div class="item" id="Indicator_M6">
+                <div class="cluebutton" onclick="alert('06');">05</div>
+            </div>
+            <div class="item" id="Indicator_M7">
+                <div class="cluebutton" onclick="alert('07');">07</div>
+            </div>
+        </div>
+    </div>
+    <!--Camera Part-->
+    <a-scene vr-mode-ui="enabled: false" color-space="sRGB" renderer="gammaOutput: true" embedded
+        arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;'>
+
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-1.patt"
+            id="M1">
+            <a-box position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
+                <a-torus-knot radius='0.26' radius-tubular='0.05' color='blue'
+                    animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                </a-torus-knot>
+            </a-box>
+        </a-marker>
+
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-2.patt"
+            id="M2">
+            <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
+                <a-torus-knot radius='0.26' radius-tubular='0.05' color='blue'
+                    animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                </a-torus-knot>
+                </a-box>
+        </a-marker>
+
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-3.patt"
+            id="M3">
+            <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
+                <a-torus-knot radius='0.26' radius-tubular='0.05' color='red'
+                    animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                </a-torus-knot>
+                </a-box>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+</body>
+
+</html>

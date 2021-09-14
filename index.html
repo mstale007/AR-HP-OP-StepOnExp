@@ -1,35 +1,328 @@
 <html>
 <meta name="viewport"
   content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+
 <head>
   <script>
-    function show(to_hide, to_show ) {
-      document.getElementById(to_show).style.display='block';
-      document.getElementById(to_hide).style.display='none';
+    function show(to_hide, to_show) {
+      document.getElementById(to_show).style.display = 'block';
+      document.getElementById(to_hide).style.display = 'none';
       return false;
     }
-    </script>
+
+    function show_ar(to_hide, to_show) {
+      document.getElementById('ar_iframe').src="hiro_marker.html";
+      document.getElementById(to_show).style.display = 'block';
+      document.getElementById(to_hide).style.display = 'none';
+      return false;
+    }
+  </script>
+
+  <style>
+    @font-face {
+      font-family: OnePlusSans;
+      src: url("resources/font/OnePlusSans/OnePlusSans-Regular.ttf");
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: OnePlusSans;
+      src: url("resources/font/OnePlusSans/OnePlusSans-Bold.ttf");
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: OnePlusSans;
+      src: url("resources/font/OnePlusSans/OnePlusSans-Light.ttf");
+      font-weight: lighter;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: OnePlusSans;
+      src: url("resources/font/OnePlusSans/OnePlusSans-Medium.ttf");
+      font-weight: 800;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: OnePlusSans;
+      src: url("resources/font/OnePlusSans/OnePlusSans-Black.ttf");
+      font-weight: 500;
+      font-style: normal;
+    }
+
+    body {
+      background-image: url("resources/images/bg-image.svg");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      background-color: black;
+
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+
+      font-family: OnePlusSans;
+      color: white;
+    }
+
+    #op-logo img {
+
+      margin-top: 57px;
+      /*7.8% */
+
+      object-fit: contain;
+      width: 14em;
+    }
+
+    #op-logo div {
+      font-size: 24px;
+      font-weight: lighter;
+      font-style: normal;
+    }
+
+    #hp-logo {
+      margin-top: 1.5em;
+    }
+
+    #hp-logo img {
+      object-fit: contain;
+      width: 100%;
+      max-width: max-content;
+    }
+
+    #hp-logo p {
+      font-size: 24px;
+      font-weight: bold;
+      font-style: normal;
+
+      margin-top: 1em;
+
+    }
+
+    #page1 {
+      margin-top: 3em;
+      justify-content: space-around;
+      align-items: center;
+      text-align: center;
+
+
+      color: white;
+
+      font-size: 24px;
+
+      transition: display 0.5s ease;
+    }
+
+    #page2 {
+      margin-top: 2.5em;
+      align-items: center;
+      text-align: center;
+
+
+      color: white;
+
+      font-size: 24px;
+
+      transition: display 0.5s ease;
+    }
+
+    #page3 {
+      margin-top: 2.5em;
+      align-items: center;
+      text-align: center;
+
+
+      color: white;
+
+      font-size: 24px;
+
+      transition: display 0.5s ease;
+    }
+
+    #page4 {
+      margin-top: 1.5em;
+      align-items: center;
+      text-align: center;
+
+
+      color: white;
+
+      font-size: 24px;
+
+      transition: display 0.5s ease;
+    }
+
+    .red-button {
+
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 1em;
+
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
+      display: flex;
+
+      line-height: 24px;
+      height: 44px;
+      width: 159px;
+      background: #F50514;
+      border-radius: 5px;
+    }
+
+    .prize_text {
+      font-size: 18px;
+      position: absolute;
+      bottom: 2em;
+      right: 0;
+      left: 0;
+    }
+
+    #page_camera {
+      background-color: black;
+    }
+
+    input[type="text"] {
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-sizing: border-box;
+      border-radius: 5px;
+      font-size: 18px;
+      padding: 10px;
+    }
+
+    input[type="number"] {
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-sizing: border-box;
+      border-radius: 5px;
+      font-size: 18px;
+      padding: 10px;
+    }
+
+    input[type="email"] {
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-sizing: border-box;
+      border-radius: 5px;
+      font-size: 18px;
+      padding: 10px;
+    }
+
+    input:focus::placeholder {
+      color: transparent;
+    }
+
+    ::-webkit-input-placeholder {
+      /* Chrome/Opera/Safari */
+      color: white;
+    }
+
+    ::-moz-placeholder {
+      /* Firefox 19+ */
+      color: white;
+    }
+
+    :-ms-input-placeholder {
+      /* IE 10+ */
+      color: white;
+    }
+
+    :-moz-placeholder {
+      /* Firefox 18- */
+      color: white;
+    }
+
+    #register {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #register input {
+      margin-top: 15px;
+      color: white;
+    }
+  </style>
 </head>
+
 <body>
-  <!-- <div id="page1">
-    <a href="#" onclick="return show('page1','page2')">Page 1</a>
+  <div>
+    <div id="op-logo">
+      <img src="resources/images/op-logo.svg">
+      <div>First ever</div>
+    </div>
+    <div id="hp-logo">
+      <img src="resources/images/hp-logo.png">
+      <p>Treasure Hunt</p>
+    </div>
+    <!-- Page 1 -->
+    <div id="page1">
+      <div>Are you also a</div>
+      <div style="font-weight: 500;">POTTERHEAD?</div>
+      <div onclick="return show('page1','page2')" class="red-button">
+        <span style="font-size: 18px;">Yes</span>
+      </div>
+      <div class="prize_text">
+        <div>Top scorer each day shall win</div>
+        <div style="font-weight: 800;">1 Limited Edition Harry Potter Watch!</div>
+      </div>
+    </div>
+    <!-- Page 2 -->
+    <div id="page2" style="display:none">
+      <div>Find Voldemort’s</div>
+      <div>7 Horcruxes hidden at the</div>
+      <div>OnePlus Store</div>
+      <div onclick="return show('page2','page3')" class="red-button">
+        <span style="font-size: 18px;">Let's Begin</span>
+      </div>
+      <div class="prize_text">
+        <div>Top scorer each day shall win</div>
+        <div style="font-weight: 800;">1 Limited Edition Harry Potter Watch!</div>
+      </div>
+    </div>
+    <!-- Page 3 -->
+    <div id="page3" style="display:none">
+    <!-- <div id="page3"> -->
+      <div>Register Below</div>
+      <form id="register">
+        <input type="text" id="Name" name="Name" placeholder="Name"><br>
+        <input type="number" id="Number" name="Number" placeholder="Mobile No."><br>
+        <input type="email" id="Email" name="Email" placeholder="Email ID">
+        <div onclick="return show('page3','page4')" class="red-button">
+          <span style="font-size: 18px;" >Next</span>
+        </div>
+      </form>
+    </div>
+    <!-- Page 4 -->
+    <div id="page4" style="display:none">
+    <!-- <div id="page4"> -->
+      <div>Rules for the game</div>
+      <div style="font-size: 18px; padding: 10px; margin: 10px; line-height: 25px;">
+        <ol style="text-align: left">
+          <li><span style="position: relative;left: 10px;">Each of the 7 Horcruxes are hidden within the store in the form of QR codes.</span></li>
+          <li><span style="position: relative;left: 10px;">Upon scanning a QR code, you solve a clue.</span></li>
+          <li><span style="position: relative;left: 10px;">You must try to finsh the hunt as quickly as possible to win the prize.</span></li>
+        </ol>
+      </div>
+      <div onclick="return show_ar('page4','page_camera')" class="red-button">
+        <span style="font-size: 18px;">Start</span>
+      </div>
+    </div>
+    <!-- <div id="page_camera"> -->
+    <div style="display:none" id="page_camera">
+      <!-- <iframe src="hiro_marker.html" id="ar_iframe" -->
+        <iframe id="ar_iframe"
+        style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden;">
+        Your browser doesn't support iframes
+      </iframe>
+    </div>
   </div>
-  <div id="page2" style="display:none">
-    <a href="#" onclick="return show('page2','page3')">Page 2</a>
-  </div>
-  <div id="page3" style="display:none">
-    <a href="#" onclick="return show('page3','page4')">Page 3</a>
-  </div>
-  <div id="page4" style="display:none">
-    <a href="#" onclick="return show('page4','page_camera')">Page 4</a>
-  </div> -->
-
-  <div><p>Here</p></div>
-  <iframe id="page_camera" src="hiro_marker.html"
-    style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden;">
-    Your browser doesn't support iframes
-  </iframe>
-
 </body>
 
 </html>
