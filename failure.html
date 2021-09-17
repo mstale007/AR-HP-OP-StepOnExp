@@ -1,0 +1,138 @@
+<html>
+<meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+
+<head>
+    <script>
+        window.onload = function (){
+            var username = sessionStorage.getItem("op-hp-ar-username");
+            if (username === null) {
+                username = "User";
+            }
+            var score = sessionStorage.getItem("op-hp-ar-userscore");
+            if (score === null) {
+                score = 650;
+            }
+            
+            document.getElementById("user_congrats").innerHTML = "Hey, " + username;
+
+            // for (let index = 0; index < padded_time.length; index++) {
+            //     if (padded_time[index] === '1') {
+            //         score_text = score_text + "<span style='color:#F50514;'>1</span>"
+            //     }
+            //     else {
+            //         score_text = score_text + padded_time[index];
+            //     }
+            // }
+            // document.getElementById("user-score").innerHTML = score_text;
+        };
+
+    </script>
+    <style>
+        @font-face {
+            font-family: OnePlusSans;
+            src: url("resources/font/OnePlusSans/OnePlusSans-Regular.ttf");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: OnePlusSans;
+            src: url("resources/font/OnePlusSans/OnePlusSans-Bold.ttf");
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: OnePlusSans;
+            src: url("resources/font/OnePlusSans/OnePlusSans-Light.ttf");
+            font-weight: lighter;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: OnePlusSans;
+            src: url("resources/font/OnePlusSans/OnePlusSans-Medium.ttf");
+            font-weight: 800;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: OnePlusSans;
+            src: url("resources/font/OnePlusSans/OnePlusSans-Black.ttf");
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        body {
+            background-image: url("resources/images/bg-image.svg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            background-color: black;
+
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+
+            font-family: OnePlusSans;
+            color: white;
+        }
+
+        #op-logo img {
+
+            margin-top: 57px;
+            /*7.8% */
+
+            object-fit: contain;
+            width: 14em;
+        }
+
+        #op-logo div {
+            font-size: 24px;
+            font-weight: lighter;
+            font-style: normal;
+        }
+
+        #hp-logo {
+            margin-top: 1.5em;
+        }
+
+        #hp-logo img {
+            object-fit: contain;
+            width: 100%;
+            max-width: max-content;
+        }
+
+        #hp-logo p {
+            font-size: 24px;
+            font-weight: bold;
+            font-style: normal;
+
+            margin-top: 1em;
+
+        }
+    </style>
+
+</head>
+
+<body>
+    <div style="width: 100%;">
+        <div id="op-logo">
+            <img src="resources/images/op-logo.svg">
+            <div>First ever</div>
+        </div>
+        <div id="hp-logo">
+            <img src="resources/images/hp-logo.png">
+            <p>Treasure Hunt</p>
+        </div>
+        <div style="font-size: 24px; margin-top: 60px; ">
+            <div style="font-weight: 800;">Game Over!</div>
+            <div id="user_congrats" style="margin-top: 60px;">Hey,</div>
+            <div>The time ran out</div>
+            <div>Thanks for playing!</div>
+        </div>
+    </div>
+</body>
+
+</html>
