@@ -12,7 +12,8 @@
     <!-- https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js -->
 
     <script>
-        var time_limit = 0;
+        var time_limit = 5;
+        var nav_closed = false;
         var clue_title = [
             "Clue 01",
             "Clue 02",
@@ -49,6 +50,17 @@
             false,
             false,
         ];
+
+        var img_src = [
+            "<img src='markersNew/cropped/diary.png'>",
+            "<img src='markersNew/cropped/ring.png'>",
+            "<img src='markersNew/cropped/locket.png'>",
+            "<img src='markersNew/cropped/cup.png'>",
+            "<img src='markersNew/cropped/diadem.png'>",
+            "<img src='markersNew/cropped/snake.png'>",
+            "<img src='markersNew/cropped/harry.png'>",
+        ]
+
         var startTime = new Date().getTime();
 
         AFRAME.registerComponent('registerevents', {
@@ -64,13 +76,30 @@
                     console.log('Marker Found: ', markerId);
 
                     var marker_number = markerId[1];
+                    if(markers_found[marker_number-1]===false){
+                        document.querySelector("#sfx_audio").play();
+                    }
                     markers_found[marker_number - 1] = true;
                     clue_title[marker_number - 1] = horcrux_names[marker_number - 1];
 
+                    
+
+                    //Update UI
                     document.getElementById("clue-number").innerHTML = clue_title[marker_number - 1];
                     document.getElementById("clue-description").innerHTML = clues[marker_number - 1];
+
+                    if (nav_closed) {
+                        var translate_height = document.getElementById("bottom-drawer").offsetHeight - (document.getElementById("collapsebutton").offsetHeight + document.getElementById("clue-number").offsetHeight + document.getElementById("clue-description").offsetHeight);
+                        document.getElementById("bottom-drawer").style.transform = "translateY(" + translate_height + "px)";
+                    }
+
+                    //Popup animation
+                    console.log(model_name);
+                    document.querySelector(model_name).emit('popup', null, false);
+
                     var indicator = document.querySelector(indicator_name);
                     indicator.style.boxShadow = "rgba(1, 120, 255, 1) 0px 0px 20px";
+                    indicator.innerHTML = img_src[marker_number - 1];
 
                     var all_found = true;
                     for (let index = 0; index < markers_found.length; index++) {
@@ -83,8 +112,8 @@
                     if (all_found) {
                         //Win!!
                         document.getElementById('win-popup').style.display = 'flex';
-                        document.getElementById('wp-img').src="resources/images/voldemort.png"
-                        document.getElementById('wp-text').innerHTML="Yay! You did it";
+                        document.getElementById('wp-img').src = "resources/images/voldemort.png"
+                        document.getElementById('wp-text').innerHTML = "Yay! You did it";
 
                         var now = new Date().getTime();
                         var distance = now - startTime;
@@ -106,6 +135,9 @@
                 marker.addEventListener("markerLost", () => {
                     var markerId = marker.id;
                     console.log('Marker Lost: ', markerId);
+
+                    var model_name = "#Model_" + markerId;
+                    document.querySelector(model_name).object3D.scale.set(0, 0, 0);
                 });
             },
         });
@@ -130,12 +162,12 @@
                 //Timeout
                 //Lost
                 document.getElementById('win-popup').style.display = 'flex';
-                document.getElementById('wp-img').src="resources/images/voldemort_laugh2.png";
-                document.getElementById('wp-text').innerHTML="Oh No! Timeout";
+                document.getElementById('wp-img').src = "resources/images/voldemort_laugh2.png";
+                document.getElementById('wp-text').innerHTML = "Oh No! Timeout";
                 setTimeout(function () {
                     document.getElementById('win-popup').style.opacity = 1;
                     setTimeout(function () {
-                        update_and_redirect('lose', -1);
+                        update_and_redirect('lose', time_limit);
                     }, 5000)
                 }, 50);
             }
@@ -144,32 +176,17 @@
 
         async function update_and_redirect(result, total_time) {
             sessionStorage.setItem("op-hp-ar-userscore", total_time);
-            if (result === 'win') {
+            var user_id = sessionStorage.getItem("op-hp-ar-userid");
 
-                window.location.href = "success.html";
-            }
-            else {
-                window.location.href = "failure.html";
-            }
 
-            // var user_id = sessionStorage.getItem('op-hp-ar-userid');
-            // const response = await fetch('https://steponexp.net/game12/update.php?id=' + user_id + '&score=' + total_time, {
-            //     method: 'GET'
-            // }).then(response => {
-            //     console.log("Response", response);
-            //     window.location.href = "http://localhost:5500/failure.html";
-            // });
-
-            // var total_time = time_limit * 60;
-            // sessionStorage.setItem("op-hp-ar-userscore", total_time);
-
-            // var user_id = sessionStorage.getItem('op-hp-ar-userid');
-            // const response = await fetch('https://steponexp.net/game12/update.php?id=' + user_id + '&score=-1', {
-            //     method: 'GET'
-            // }).then(response => {
-            //     console.log("Response", response);
-            //     window.location.href = "http://localhost:5500/failure.html";
-            // });
+            await fetch("https://steponexp.net/game12/update.php?id=" + user_id + "&score=" + total_time, { method: 'GET' }).then(function (response) {
+                if (result === 'win') {
+                    window.top.location.href = "success.html";
+                }
+                else {
+                    window.top.location.href = "failure.html";
+                }
+            })
         }
 
         function show(shown, hidden) {
@@ -180,6 +197,7 @@
 
         function openNav() {
             // console.log("In Open");
+            nav_closed = false;
             document.getElementById("bottom-drawer").style.transform = "translateY(0em)";
             document.getElementById("toggleslide").setAttribute('onClick', "closeNav()");
             document.getElementById("toggleslide").innerHTML = 'expand_more';
@@ -187,8 +205,8 @@
 
         function closeNav() {
             // console.log("In Close");
+            nav_closed = true;
             var translate_height = document.getElementById("bottom-drawer").offsetHeight - (document.getElementById("collapsebutton").offsetHeight + document.getElementById("clue-number").offsetHeight + document.getElementById("clue-description").offsetHeight);
-            console.log("Down pix: ", translate_height);
             document.getElementById("bottom-drawer").style.transform = "translateY(" + translate_height + "px)";
             document.getElementById("toggleslide").setAttribute('onClick', "openNav()");
             document.getElementById("toggleslide").innerHTML = 'expand_less';
@@ -331,6 +349,13 @@
             transition: all 1s ease-out;
         }
 
+        .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            overflow: hidden;
+        }
+
 
         .timerbar {
             background: black;
@@ -415,7 +440,10 @@
 </head>
 
 <body style="margin : 0px; overflow: hidden; background-color: white;">
+    <!-- SoundFX -->
+    <audio id="sfx_audio" preload="auto" src="resources/audio/sfx2.mp3"></audio>
 
+    <!-- Winpopup -->
     <div id="win-popup" style="display: none;">
         <div id=wp-bg>
             <img id="wp-img" src="resources/images/voldemort.png">
@@ -438,10 +466,8 @@
         <div class="collapsebutton" id="collapsebutton"><span class="material-icons" id="toggleslide"
                 onclick="closeNav()">expand_more</span>
         </div>
-        <div id="clue-number" style="font-size: 24px; font-weight: bold; color: #F50514;">Clue 01</div>
-        <div id="clue-description">Created in the girls bathroom on the first floor of Hogwarts, To find this clue
-            you
-            may have to look downwards!</div>
+        <div id="clue-number" style="font-size: 24px; font-weight: bold; color: #F50514;">Clues</div>
+        <div id="clue-description">Click on clue number to get it's description</div>
         <div id="container">
             <div class="item" id="Indicator_M1" onclick="button_click(01);">01</div>
             <div class="item" id="Indicator_M2" onclick="button_click(02);">02</div>
@@ -456,85 +482,110 @@
     </div>
 
     <!--Camera Part-->
-    <a-scene vr-mode-ui="enabled: false" color-space="sRGB" renderer="gammaOutput: true" embedded
+    <a-scene vr-mode-ui=" enabled: false" color-space="sRGB" renderer="gammaOutput: true" embedded
         arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;'>
+        <!-- <a-entity light="type: ambient; color: #BBB"></a-entity>
+        <a-entity light="type: directional; color: #FFF; intensity: 0.6" position="-0.5 1 1"></a-entity> -->
 
-        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-1.patt"
-            id="M1">
+        <!-- <a-sky src="#sky"></a-sky>
+        <a-assets>
+            <img id="reflection"
+                src="https://raw.githubusercontent.com/mrdoob/three.js/r82/examples/textures/2294472375_24a3b8ef46_o.jpg">
+            <img id="sky"
+                src="https://raw.githubusercontent.com/mrdoob/three.js/r82/examples/textures/2294472375_24a3b8ef46_o.jpg">
+        </a-assets> -->
+
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-diary.patt" id="M1">
             <!-- <a-box position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
                 <a-torus-knot radius='0.26' radius-tubular='0.05' color='blue'
                     animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
                 </a-torus-knot>
             </a-box> -->
-            <a-entity material="shader: flat;" id="directionaltarget" shadow="receive: false; cast: false"
-                gltf-model="resources\models\diary.glb" rotation='0 -45 0' scale='0 0 0'
+            <a-entity id="Model_M1" gltf-model="resources\models\diary2.glb" rotation='0 -45 0' scale='0 0 0'
                 animation="property: rotation; to:0 -45 360; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:0.5 0.5 0.5; dur: 3000; easing: easeInOutElastic;"></a-entity>
+                animation__2="property: scale; to:0.5 0.5 0.5; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+                <!-- "property: scale; to:0.5 0.5 0.5; dur: "+popup_animation_time+"; easing: easeOutElastic;" -->
+                </a-animation>
+            </a-entity>
         </a-marker>
 
-        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-2.patt"
-            id="M2">
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-ring.patt" id="M2">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
                 <a-torus-knot radius='0.26' radius-tubular='0.05' color='blue'
-                    animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                    animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
                 </a-torus-knot>
                 </a-box> -->
-            <a-entity id="Model_M2" gltf-model="resources\models\ring.glb" rotation='-45 0 0' scale='0.1 0.1 0.1'
-                animation="property: rotation; to:-45 0 360; dur: 10000; easing: linear; loop: true"></a-entity>
+            <a-entity id="Model_M2" gltf-model="resources\models\ring2.glb" rotation='0 0 0' scale='0 0 0'
+                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
+                animation__2="property: scale; to:0.1 0.1 0.1; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+                <!-- <a-entity light="type: point; intensity: 1; distance: 50; decay: 2" position="0 0 0"></a-entity> -->
+            </a-entity>
         </a-marker>
 
-        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-3.patt"
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-locket.patt"
             id="M3">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
                 <a-torus-knot radius='0.26' radius-tubular='0.05' color='#F50514'
-                    animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                    animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
                 </a-torus-knot>
                 </a-box> -->
-            <a-entity gltf-model="resources\models\ring.glb" rotation='-45 0 0' scale='0.1 0.1 0.1'
-                animation="property: rotation; to:-45 0 360; dur: 10000; easing: linear; loop: true"></a-entity>
+            <!-- <a-entity light="type: spot; angle: 90; intensity:50" position="0 10 10"></a-entity> -->
+            <a-entity id="Model_M3" gltf-model="resources\models\locket2.glb" rotation='0 0 0' scale='0 0 0'
+                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
+                animation__2="property: scale; to:0.2 0.2 0.2; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+
+            </a-entity>
         </a-marker>
-        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-4.patt"
-            id="M4">
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-cup.patt" id="M4">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
             <a-torus-knot radius='0.26' radius-tubular='0.05' color='#F50514'
-                animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+                animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
             </a-torus-knot>
             </a-box> -->
-            <a-entity gltf-model="resources\models\ring.glb" rotation='-45 0 0' scale='0.1 0.1 0.1'
-                animation="property: rotation; to:-45 0 360; dur: 10000; easing: linear; loop: true"></a-entity>
+            <a-entity id="Model_M4" gltf-model="resources\models\cup2.glb" rotation='0 0 0' scale='0 0 0'
+                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
+                animation__2="property: scale; to:10 10 10; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+            </a-entity>
         </a-marker>
-        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-5.patt"
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-diadem.patt"
             id="M5">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
         <a-torus-knot radius='0.26' radius-tubular='0.05' color='#F50514'
-            animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+            animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
         </a-torus-knot>
         </a-box> -->
-
-            <a-entity id="diadem" gltf-model="resources\models\diadem.glb" rotation='0 0 0' scale='0.01 0.01 0.01'
-                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true">
+            <!-- <a-entity light="type: point; intensity: 100; distance: 5; decay: 5" position="0 0 0"></a-entity>
+            <a-entity light="type: point; intensity: 50; distance: 5; decay: 10" position="0.25 -0.5 1"></a-entity> -->
+            <!-- <a-entity light="type: spot; angle: 70; intensity:50" position="0 15 20"></a-entity> -->
+            <!-- animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true" -->
+            <a-entity id="Model_M5" gltf-model="resources\models\diadem2.glb" rotation='0 0 0' scale='0 0 0'
+                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
+                animation__2="property: scale; to:0.01 0.01 0.01; dur: 1000 easing: easeOutElastic; startEvents: popup;">
             </a-entity>
         </a-marker>
-        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-6.patt"
-            id="M6">
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-snake.patt" id="M6">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
     <a-torus-knot radius='0.26' radius-tubular='0.05' color='#F50514'
-        animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+        animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
     </a-torus-knot>
     </a-box> -->
-            <a-entity gltf-model="resources\models\snake.glb" position='-1 0 1' rotation='0 0 0' scale='1 1 1'
-                elasticity="1000"></a-entity>
+            <a-entity id="Model_M6" gltf-model="resources\models\snake.glb" position='-1 0 1' rotation='0 0 0'
+                scale='0 0 0' elasticity="1000"
+                animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+            </a-entity>
         </a-marker>
-        <a-marker registerevents preset='custom' type='pattern' url="resources\markers\pattern-Individual_Blocks-7.patt"
-            id="M7">
+        <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-harry.patt" id="M7">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
     <a-torus-knot radius='0.26' radius-tubular='0.05' color='#F50514'
-        animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
+        animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
     </a-torus-knot>
     </a-box> -->
-            <a-entity gltf-model="resources\models\harry.glb" rotation='0 0 0'
-                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"></a-entity>
+            <a-entity id="Model_M7" gltf-model="resources\models\harry.glb" rotation='0 0 0' scale='0 0 0'
+                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
+                animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+            </a-entity>
         </a-marker>
+        <!-- <a-camera-static/> -->
         <a-entity camera></a-entity>
     </a-scene>
 </body>
