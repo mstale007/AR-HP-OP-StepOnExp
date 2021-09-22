@@ -3,11 +3,13 @@
   content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 
 <head>
+  <title>OnePlus Harry Potter</title>
+  <link rel="icon" href="resources\images\op-tab-logo.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script>
     var user_id = -10;
     var global_name = "username";
-    var bg_music_is_on=true;
+    var bg_music_is_on=false;
 
     function toggle_music(){
       if(bg_music_is_on){
@@ -29,6 +31,7 @@
       else {
         document.getElementsByClassName("screen-rotate-popup")[0].style.display = 'none';
       }
+      toggle_music();
     }
 
     function show(to_hide, to_show) {
