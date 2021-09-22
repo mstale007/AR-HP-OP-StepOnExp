@@ -75,8 +75,8 @@
                     var indicator_name = "#Indicator_" + markerId;
                     var model_name = "#Model_" + markerId;
 
-                    console.log('Indicator: ', indicator_name);
-                    console.log('Marker Found: ', markerId);
+                    // console.log('Indicator: ', indicator_name);
+                    // console.log('Marker Found: ', markerId);
 
                     var marker_number = markerId[1];
                     if (markers_found[marker_number - 1] === false) {
@@ -103,7 +103,7 @@
                     }
 
                     //Popup animation
-                    console.log(model_name);
+                    // console.log(model_name);
                     document.querySelector(model_name).emit('popup', null, false);
 
                     var indicator = document.querySelector(indicator_name);
@@ -116,7 +116,7 @@
                             all_found = false;
                         }
                     }
-                    console.log(markers_found);
+                    // console.log(markers_found);
 
                     if (all_found) {
                         //Win!!
@@ -147,7 +147,7 @@
 
                 marker.addEventListener("markerLost", () => {
                     var markerId = marker.id;
-                    console.log('Marker Lost: ', markerId);
+                    // console.log('Marker Lost: ', markerId);
 
                     var model_name = "#Model_" + markerId;
                     document.querySelector(model_name).object3D.scale.set(0, 0, 0);
@@ -166,21 +166,12 @@
             endTime = new Date(startTime + time_limit * 60000);
             setInterval(function () {
                 var now = new Date().getTime();
-
-                // var distance_covered = now - startTime;
+                
                 var distance_left = endTime - now;
-
-                // var minutes_covered = Math.floor((distance_covered % (1000 * 60 * 60)) / (1000 * 60));
-                // var seconds_covered = Math.floor((distance_covered % (1000 * 60)) / 1000);
-
                 var minutes_left = Math.floor((distance_left % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds_left = Math.floor((distance_left % (1000 * 60)) / 1000);
 
-                minutes_left = minutes_left < 10 ? "0" + minutes_left : minutes_left;
-                seconds_left = seconds_left < 10 ? "0" + seconds_left : seconds_left;
-                document.getElementById("timercounter").innerHTML = minutes_left.toString() + ":" + seconds_left.toString(); 
-
-                if (minutes_covered >= time_limit) {
+                if (minutes_left < 0) {
                     //Timeout
                     //Lost
                     document.getElementById('win-popup').style.display = 'flex';
@@ -189,9 +180,14 @@
                     setTimeout(function () {
                         document.getElementById('win-popup').style.opacity = 1;
                         setTimeout(function () {
-                            update_and_redirect('lose', time_limit*60);
+                            update_and_redirect('lose', time_limit * 60);
                         }, 5000)
-                    }, 4000);
+                    }, 50);
+                }
+                if (minutes_left >= 0 && seconds_left >= 0) {
+                    minutes_left = minutes_left < 10 ? "0" + minutes_left : minutes_left;
+                    seconds_left = seconds_left < 10 ? "0" + seconds_left : seconds_left;
+                    document.getElementById("timercounter").innerHTML = minutes_left.toString() + ":" + seconds_left.toString();
                 }
 
             }, 1000);
