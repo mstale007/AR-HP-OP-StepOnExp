@@ -450,7 +450,7 @@
 </head>
 
 <body>
-  <audio id="bg_audio" autoplay loop preload="auto" src="resources/audio/bg_loop2.mp3"></audio>
+  <audio id="bg_audio" autoplay loop src="resources/audio/bg_loop2.mp3"></audio>
   <div id="bg_music_div" style="position: absolute; top: 0; right: 0; width: auto; z-index: 10; justify-content: end; padding: 5px; margin: 15px; border: 2px solid rgba(255, 255, 255, 0.85); border-radius: 100%;" onclick="toggle_music();">
     <span id="bg_music_icon" class="material-icons" style="color: white; font-size: 17px;">
       music_note</span>
@@ -515,11 +515,12 @@
     <!-- Page 4 -->
     <div id="page4" style="display:none">
       <div>Rules for the game</div>
-      <div style="font-size: 18px; padding: 10px; margin: 10px; line-height: 25px;">
+      <div style="font-size: 18px; padding: 10px; margin: 10px; margin-bottom: 5px; padding-bottom: 0px; line-height: 25px;">
         <ol style="text-align: left">
           <li><span style="position: relative;left: 10px;">Each of the 7 Horcruxes are hidden within the store in the
               form of QR codes.</span></li>
           <li><span style="position: relative;left: 10px;">Upon scanning a QR code, you solve a clue.</span></li>
+          <li><span style="position: relative;left: 10px;">Countdown starts after scanning the first QR code.</span></li>
           <li><span style="position: relative;left: 10px;">You must try to finsh the hunt as quickly as possible to win
               the prize.</span></li>
         </ol>
