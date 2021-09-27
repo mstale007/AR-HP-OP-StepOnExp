@@ -14,6 +14,7 @@
     <script>
         var time_limit = 20;
         var nav_closed = false;
+        var game_finished = false;
 
         var first_marker_found = false;
         var clue_title = [
@@ -66,11 +67,127 @@
         var startTime = new Date().getTime();
         var endTime = new Date().getTime();
 
+        var user_id;
+        var is_timer_started = false;
+        var user_time_elapsed = "";
+        var user_progress = null;
+
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        window.onload = function () {
+            setTimeout(function () {
+                document.querySelector("#start_popup").style.opacity = 0;
+                setTimeout(function () {
+                    document.querySelector("#start_popup").style.display = 'none';
+                }, 1000);
+            }, 4000);
+            // user_id = sessionStorage.getItem("op-hp-ar-userid");
+            // is_timer_started = sessionStorage.getItem('op-hp-ar-user-' + user_id + '-timerstared');
+            // user_progress = sessionStorage.getItem('op-hp-ar-user-' + user_id + '-progress');
+            // user_status = sessionStorage.getItem("op-hp-ar-user-" + user_id + "-status");
+
+            user_id = getCookie("op-hp-ar-userid");
+            is_timer_started = getCookie('op-hp-ar-user-' + user_id + '-timerstared');
+            user_progress = getCookie('op-hp-ar-user-' + user_id + '-progress');
+            user_status = getCookie("op-hp-ar-user-" + user_id + "-status");
+
+            //Timer started
+            //true: Continue progress
+            //false: Start the Game
+            if (is_timer_started !== "" && user_progress !== "" && user_status === "0") {
+                // if (user_status===0) {
+                //Continue from time elapsed
+                // user_time_elapsed = sessionStorage.getItem('op-hp-ar-user-' + user_id + '-timerelapsed');
+                user_time_elapsed = getCookie('op-hp-ar-user-' + user_id + '-timerelapsed');
+                user_progress_json = JSON.parse(user_progress);
+                var i;
+                var all_found = true;
+                for (i = 0; i < user_progress_json.length; i++) {
+                    markers_found[i] = user_progress_json[i];
+                    if (markers_found[i] === true) {
+                        first_marker_found = true;
+                        clue_title[i] = horcrux_names[i];
+                        var indicator = document.querySelector("#Indicator_M" + (i + 1));
+                        indicator.style.boxShadow = "rgba(1, 120, 255, 1) 0px 0px 20px";
+                        indicator.innerHTML = img_src[i];
+                    }
+                    else {
+                        all_found = false;
+                    }
+                }
+                if (all_found) {
+                    game_finished = true;
+                    document.getElementById('win-popup').style.display = 'flex';
+                    document.getElementById('wp-img').src = "resources/images/voldemort.png"
+                    document.getElementById('wp-text').innerHTML = "Yay! You did it";
+
+                    var now = new Date().getTime();
+                    var distance = now - startTime;
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    if (user_time_elapsed === "") {
+                        var total_time = minutes * 60 + seconds;
+                    }
+                    else {
+                        var total_time = minutes * 60 + parseInt(seconds) + parseInt(user_time_elapsed);
+                    }
+                    // console.log("Everythong score related", minutes, seconds, user_time_elapsed, total_time);
+                    setTimeout(function () {
+
+                        document.getElementById('win-popup').style.opacity = 1;
+                        setTimeout(function () {
+                            update_and_redirect('win', total_time);
+                        }, 5000)
+                    }, 4000);
+                }
+                console.log("Elapsed Time: " + user_time_elapsed)
+                start_timer(user_time_elapsed);
+            }
+            else if (user_status !== 0) {
+                // var user_score = parseInt(sessionStorage.getItem("op-hp-ar-userscore"));
+                var user_score = parseInt(getCookie("op-hp-ar-userscore"));
+                // console.log(user_score === time_limit * 60);
+                // console.log("I was here");
+                if (user_status === 1) {
+                    window.top.location.replace("success.html");
+                }
+                else if (user_status === 2) {
+                    window.top.location.replace("failure.html");
+                }
+            }
+        }
+
         AFRAME.registerComponent('registerevents', {
             init: function () {
                 const marker = this.el;
 
                 marker.addEventListener("markerFound", () => {
+                    if (game_finished) {
+                        return;
+                    }
                     var markerId = marker.id;
                     var indicator_name = "#Indicator_" + markerId;
                     var model_name = "#Model_" + markerId;
@@ -81,17 +198,33 @@
                     var marker_number = markerId[1];
                     if (markers_found[marker_number - 1] === false) {
                         console.log("Marker Number", marker_number);
+                        //Play sfx
                         if (marker_number === '6') {
                             document.querySelector("#parcel_audio").play();
                         }
                         else {
                             document.querySelector("#sfx_audio").play();
                         }
+
+                        //Found Popup
+                        document.querySelector('#found_popup').style.display = 'flex';
+                        document.querySelector('#found_popup_text1').innerHTML = "You found Clue 0" + marker_number + "!"
+                        document.querySelector('#found_popup_text2').innerHTML = horcrux_names[marker_number - 1];
+                        document.querySelector('#found_popup').style.opacity = 1;
+
+                        setTimeout(function () {
+                            document.querySelector("#found_popup").style.opacity = 0;
+                            setTimeout(function () {
+                                document.querySelector("#found_popup").style.display = 'none';
+                            }, 1000);
+                        }, 3000)
                     }
                     markers_found[marker_number - 1] = true;
                     clue_title[marker_number - 1] = horcrux_names[marker_number - 1];
 
-
+                    //Save progress
+                    // sessionStorage.setItem('op-hp-ar-user-' + user_id + '-progress', JSON.stringify(markers_found));
+                    setCookie('op-hp-ar-user-' + user_id + '-progress', JSON.stringify(markers_found), 365);
 
                     //Update UI
                     document.getElementById("clue-number").innerHTML = clue_title[marker_number - 1];
@@ -101,6 +234,10 @@
                         var translate_height = document.getElementById("bottom-drawer").offsetHeight - (document.getElementById("collapsebutton").offsetHeight + document.getElementById("clue-number").offsetHeight + document.getElementById("clue-description").offsetHeight);
                         document.getElementById("bottom-drawer").style.transform = "translateY(" + translate_height + "px)";
                     }
+                    // else{
+                    //     // var translate_height = document.getElementById("collapsebutton").offsetHeight + document.getElementById("clue-number").offsetHeight + document.getElementById("clue-description").offsetHeight + document.getElementById("container").offsetHeight;
+                    //     // document.getElementById("bottom-drawer").style.transform = "translateY(" + translate_height + "px)";
+                    // }
 
                     //Popup animation
                     // console.log(model_name);
@@ -120,6 +257,7 @@
 
                     if (all_found) {
                         //Win!!
+                        game_finished = true;
                         document.getElementById('win-popup').style.display = 'flex';
                         document.getElementById('wp-img').src = "resources/images/voldemort.png"
                         document.getElementById('wp-text').innerHTML = "Yay! You did it";
@@ -129,7 +267,14 @@
                         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                        var total_time = minutes * 60 + seconds;
+
+                        if (user_time_elapsed === "") {
+                            var total_time = minutes * 60 + seconds;
+                        }
+                        else {
+                            var total_time = (minutes * 60) + parseInt(seconds) + parseInt(user_time_elapsed);
+                        }
+                        // console.log("Everythong score related", minutes, seconds, user_time_elapsed, total_time);
                         setTimeout(function () {
 
                             document.getElementById('win-popup').style.opacity = 1;
@@ -141,6 +286,9 @@
                     }
                     if (!first_marker_found) {
                         first_marker_found = true;
+                        // sessionStorage.setItem('op-hp-ar-user-' + user_id + '-timerstared', true);
+                        setCookie('op-hp-ar-user-' + user_id + '-timerstared', true, 365);
+                        console.log("Timer started!")
                         start_timer();
                     }
                 });
@@ -161,16 +309,28 @@
             document.getElementById("clue-description").innerHTML = clues[number - 1];
         }
 
-        function start_timer() {
+        function start_timer(time_elapsed = 0) {
             startTime = new Date().getTime();
-            endTime = new Date(startTime + time_limit * 60000);
+            endTime = new Date(startTime + (time_limit * 60000) - ((parseInt(time_elapsed)) * 1000));
             setInterval(function () {
                 var now = new Date().getTime();
-                
+
                 var distance_left = endTime - now;
                 var minutes_left = Math.floor((distance_left % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds_left = Math.floor((distance_left % (1000 * 60)) / 1000);
 
+                // console.log(distance_left);
+                // if(seconds_left===0 || seconds_left===15 || seconds_left===30 || seconds_left===45){
+                // }
+                if (minutes_left >= 0 && seconds_left >= 0 && !game_finished) {
+                    minutes_left = minutes_left < 10 ? "0" + minutes_left : minutes_left;
+                    seconds_left = seconds_left < 10 ? "0" + seconds_left : seconds_left;
+                    document.getElementById("timercounter").innerHTML = minutes_left.toString() + ":" + seconds_left.toString();
+                    var tmp = minutes_left * 60 + seconds_left;
+                    tmp = time_limit * 60 - tmp;
+                    // sessionStorage.setItem('op-hp-ar-user-' + user_id + '-timerelapsed', tmp);
+                    setCookie('op-hp-ar-user-' + user_id + '-timerelapsed', tmp, 365);
+                }
                 if (minutes_left < 0) {
                     //Timeout
                     //Lost
@@ -180,30 +340,38 @@
                     setTimeout(function () {
                         document.getElementById('win-popup').style.opacity = 1;
                         setTimeout(function () {
-                            update_and_redirect('lose', time_limit * 60);
+                            update_and_redirect('lost', time_limit * 60);
                         }, 5000)
                     }, 50);
-                }
-                if (minutes_left >= 0 && seconds_left >= 0) {
-                    minutes_left = minutes_left < 10 ? "0" + minutes_left : minutes_left;
-                    seconds_left = seconds_left < 10 ? "0" + seconds_left : seconds_left;
-                    document.getElementById("timercounter").innerHTML = minutes_left.toString() + ":" + seconds_left.toString();
                 }
 
             }, 1000);
         }
 
         async function update_and_redirect(result, total_time) {
-            sessionStorage.setItem("op-hp-ar-userscore", total_time);
-            var user_id = sessionStorage.getItem("op-hp-ar-userid");
+            // sessionStorage.setItem("op-hp-ar-userscore", total_time);
+            // console.log(total_time);
+            setCookie("op-hp-ar-userscore", total_time, 365);
+            // var user_id = sessionStorage.getItem("op-hp-ar-userid");
+            var user_id = getCookie("op-hp-ar-userid");
+            // sessionStorage.setItem("op-hp-ar-user-" + user_id + "-status", "C");
+            // setCookie("op-hp-ar-user-" + user_id + "-status", result);
+            var user_status;
+            if (result === 'win') {
+                user_status=1;
+            }
+            else {
+                user_status=2;
+            }
 
 
-            await fetch("https://steponexp.net/game12/update.php?id=" + user_id + "&score=" + total_time, { method: 'GET' }).then(function (response) {
+            await fetch("https://steponexp.net/game12/update.php?id=" + user_id + "&score=" + total_time + "&status=" + user_status, { method: 'GET' }).then(function (response) {
+                // console.log("I was here2");
                 if (result === 'win') {
-                    window.top.location.href = "success.html";
+                    window.top.location.replace("success.html");
                 }
                 else {
-                    window.top.location.href = "failure.html";
+                    window.top.location.replace("failure.html");
                 }
             })
         }
@@ -273,6 +441,38 @@
             font-family: OnePlusSans;
         }
 
+        .popup {
+            z-index: 10;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 15%;
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+
+            color: white;
+            transition: all 1s ease-in;
+        }
+
+        #start_popup_bg {
+            background-color: rgba(0, 0, 0, 0.46);
+            padding: 10px;
+            max-width: 65%;
+
+            border-radius: 1em 1em 1em 1em;
+        }
+
+        #found_popup_bg {
+            background-color: rgba(0, 0, 0, 0.46);
+            padding: 10px;
+            width: 70%;
+
+            border-radius: 1em 1em 1em 1em;
+        }
+
         .slideup {
             -webkit-user-select: none;
             /* Safari */
@@ -296,6 +496,8 @@
 
             transition: 0.5s;
 
+            overflow: scroll;
+
         }
 
         .slideup .material-icons {
@@ -314,7 +516,7 @@
             font-size: 20px;
         }
 
-        #container {
+        .container {
             margin-left: 30px;
             margin-right: 30px;
             /* bottom: 0;
@@ -357,15 +559,88 @@
             margin: 10px;
 
             background: #fff;
-            border: 3px solid #F50514;
+            /* border: 2px solid #F50514; */
+            border: 2px solid #C59D62;
+            /* background-image: url('resources/images/reveal_effect.png');
+            background-size: contain;
+            animation: rotation 5s infinite linear; */
+
 
             /* box-shadow: rgba(1, 120, 255, 1) 0px 0px 17px; */
-            color: #F50514;
+            /* color: #F50514; */
+            /* color: #F50514; */
+            color: #C59D62;
             text-align: center;
             font-size: 18px;
             font-weight: bold;
 
             transition: all 1s ease-out;
+        }
+
+        .item_bg {
+            width: 61px;
+            height: 65px;
+
+            /* padding: 7.5px;
+            margin: 10px; */
+
+            text-align: center;
+
+            object-fit: contain;
+
+            transition: opacity 1s ease-out;
+        }
+
+        .item_bg img {
+            object-fit: contain;
+            top: 0;
+            position: absolute;
+            width: 65px;
+            height: 65px;
+            -webkit-animation: rotation 5s infinite linear;
+            -moz-animation: rotation 5s infinite linear;
+            -o-animation: rotation 5s infinite linear;
+            animation: rotation 5s infinite linear;
+        }
+
+        @-webkit-keyframes rotation {
+            from {
+                -webkit-transform: rotate(0deg);
+            }
+
+            to {
+                -webkit-transform: rotate(359deg);
+            }
+        }
+
+        @-moz-keyframes rotation {
+            from {
+                -moz-transform: rotate(0deg);
+            }
+
+            to {
+                -moz-transform: rotate(359deg);
+            }
+        }
+
+        @-o-keyframes rotation {
+            from {
+                -o-transform: rotate(0deg);
+            }
+
+            to {
+                -o-transform: rotate(359deg);
+            }
+        }
+
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(359deg);
+            }
         }
 
         .item img {
@@ -413,7 +688,7 @@
         }
 
         .material-icons {
-            color: #F50514;
+            color: #C59D62;
             padding-top: 3px;
             padding-right: .2em;
         }
@@ -463,6 +738,20 @@
     <audio id="sfx_audio" src="resources/audio/sfx2.mp3"></audio>
     <audio id="parcel_audio" src="resources/audio/parcel.mp3"></audio>
 
+    <!-- Start Popup -->
+    <div id="start_popup" class="popup">
+        <div id="start_popup_bg">
+            <p style="font-size: 24px;">Find QR Code</p>
+            <div style="font-size: 18px;">Solve a clue and fill one of the circular bounties below</div>
+        </div>
+    </div>
+    <!-- Found Popup -->
+    <div id="found_popup" class="popup" style="bottom:42%; top:auto; display: none;">
+        <div id="found_popup_bg">
+            <div id="found_popup_text1" style="font-size: 18px;">You found Clue 01!</div>
+            <div id="found_popup_text2" style="font-size: 24px;">Tom Riddle’s Diary</div>
+        </div>
+    </div>
     <!-- Winpopup -->
     <div id="win-popup" style="display: none;">
         <div id=wp-bg>
@@ -473,7 +762,7 @@
     <!--Timer Bar-->
     <div class="timerbar">
         <div class="companylogo">
-            <img src="resources/images/op-logo.svg" style="max-width: 100%;">
+            <img src="resources/images/op-white-logo.png" style="max-width: 100%;">
         </div>
         <div class="timerside">
             <span class="material-icons">timer</span>
@@ -486,18 +775,27 @@
         <div class="collapsebutton" id="collapsebutton"><span class="material-icons" id="toggleslide"
                 onclick="closeNav()">expand_more</span>
         </div>
-        <div id="clue-number" style="font-size: 24px; font-weight: bold; color: #F50514;">Clues</div>
+        <div id="clue-number" style="font-size: 24px; font-weight: normal; color: #C59D62;">Clues</div>
         <div id="clue-description">Click on clue number to get it's description</div>
-        <div id="container">
-            <div class="item" id="Indicator_M1" onclick="button_click(01);">01</div>
-            <div class="item" id="Indicator_M2" onclick="button_click(02);">02</div>
-            <div class="item" id="Indicator_M3" onclick="button_click(03);">03</div>
-            <div class="item" id="Indicator_M4" onclick="button_click(04);">04</div>
+        <div class="container">
+            <!-- <div class="item_bg"><img src="resources/images/reveal_effect.png"></div> -->
+            <div>
+                <div class="container">
+                    <div class="item" id="Indicator_M1" onclick="button_click(01);">01</div>
+                    <div class="item" id="Indicator_M2" onclick="button_click(02);">02</div>
+                    <div class="item" id="Indicator_M3" onclick="button_click(03);">03</div>
+                    <div class="item" id="Indicator_M4" onclick="button_click(04);">04</div>
+                </div>
+            </div>
         </div>
-        <div id="container">
-            <div class="item" id="Indicator_M5" onclick="button_click(05);">05</div>
-            <div class="item" id="Indicator_M6" onclick="button_click(06);">06</div>
-            <div class="item" id="Indicator_M7" onclick="button_click(07);">07</div>
+        <div class="container">
+            <div style="z-index: 11; position: absolute;">
+                <div class="container">
+                    <div class="item" id="Indicator_M5" onclick="button_click(05);">05</div>
+                    <div class="item" id="Indicator_M6" onclick="button_click(06);">06</div>
+                    <div class="item" id="Indicator_M7" onclick="button_click(07);">07</div>
+                </div>
+            </div>
         </div>
     </div>
 

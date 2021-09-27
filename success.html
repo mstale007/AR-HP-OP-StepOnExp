@@ -3,14 +3,45 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 
 <head>
+    <title>OnePlus Harry Potter</title>
+    <link rel="icon" href="resources\images\op-tab-logo.png">
     <script>
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+
         window.onload = function () {
-            var username = sessionStorage.getItem("op-hp-ar-username");
-            if (username === null) {
+            window.history.replaceState(null, null, '');
+            // console.log("Here");
+            // var username = sessionStorage.getItem("op-hp-ar-username");
+            var username = getCookie("op-hp-ar-username");
+            if (username === "") {
                 username = "User";
             }
-            var score = sessionStorage.getItem("op-hp-ar-userscore");
-            if (score === null) {
+            // var score = sessionStorage.getItem("op-hp-ar-userscore");
+            var score = getCookie("op-hp-ar-userscore");
+            if (score === "") {
                 score = 650;
             }
             var minutes = Math.floor(score / 60);
@@ -68,7 +99,7 @@
         }
 
         body {
-            background-image: url("resources/images/bg-image.svg");
+            background-image: url("resources/images/bg-image.png");
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
@@ -115,27 +146,31 @@
             margin-top: 1em;
 
         }
-
-        
     </style>
 
 </head>
 
 <body>
-    <div style="width: 100%;">
-        <div id="op-logo">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+        <!-- <div id="op-logo">
             <img src="resources/images/op-logo.svg">
             <div>First ever</div>
-        </div>
+        </div> -->
         <div id="hp-logo">
-            <img src="resources/images/hp-logo.png">
+            <!-- <img src="resources/images/hp-logo.png"> -->
+            <img src="resources/images/hp-op-logo.png">
             <p>Treasure Hunt</p>
         </div>
-        <div style="font-size: 24px; margin-top: 60px; ">
-            <div id="user_congrats" style="font-weight: 800;">Congratulations!</div>
-            <div style="margin-top: 60px;">You have successfully</div>
-            <div>finished the hunt</div>
-            <div id="user-score">in 00:00</div>
+        <div
+            style="font-size: 24px; margin-top: 60px; flex: 1 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <!-- <div id="user_congrats" style="font-weight: 800;">Congratulations!</div> -->
+            <div>
+                <div id="user_congrats">Congratulations!</div>
+                <div style="margin-top: 60px;">You have successfully</div>
+                <div>finished the hunt</div>
+                <div id="user-score">in 00:00</div>
+            </div>
+            <div style="position: relative; bottom: 0; font-size: 18px; margin-top: 17px; padding: 10px;">Winners will be announced today on Instagram</div>
         </div>
     </div>
 </body>

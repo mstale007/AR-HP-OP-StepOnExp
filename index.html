@@ -9,18 +9,51 @@
   <script>
     var user_id = -10;
     var global_name = "username";
-    var bg_music_is_on=false;
+    var bg_music_is_on = false;
+    var user_city = "";
+    var user_store = "";
+    var name= "";
+    var number="";
+    var email = "";
 
-    function toggle_music(){
-      if(bg_music_is_on){
-        document.querySelector("#bg_audio").pause();
-        document.querySelector("#bg_music_icon").innerHTML="music_off";
-        bg_music_is_on=false;
+    var store_options = {
+      'Pune': ['Pune1', 'Pune2', 'Pune3'],
+      'Mumbai': ['Mumbai1', 'Mumbai2', 'Mumbai3'],
+      'Delhi': ['Delhi1', 'Delhi2', 'Delhi3'],
+      'Kolkata': ['Kolkata1', 'Kolkata2', 'Kolkata3']
+    }
+
+    var elem = null;
+    // var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    // if (!isChrome) {
+    //   var audio=document.querySelector('#iframeAudio');
+    // }
+    // else {
+    //   var audio=document.querySelector('#bg_audio');
+    // }
+    // audio.parentNode.removeChild(audio);
+
+    /* View in fullscreen */
+    function openFullscreen() {
+      console.log("Fullscreen");
+      var elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
       }
-      else{
-        document.querySelector("#bg_audio").play();
-        document.querySelector("#bg_music_icon").innerHTML="music_note";
-        bg_music_is_on=true;
+    }
+
+    /* Close fullscreen */
+    function closeFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen();
       }
     }
 
@@ -31,7 +64,40 @@
       else {
         document.getElementsByClassName("screen-rotate-popup")[0].style.display = 'none';
       }
-      toggle_music();
+      // document.querySelector("#bg_music_div").click();
+
+      var city_dropdown = document.querySelector('#div_city');
+      for (var key in store_options) {
+        var new_option = document.createElement("option");
+        new_option.value = key;
+        new_option.innerHTML = key;
+        // new_option.style="color: white;";
+        city_dropdown.appendChild(new_option);
+      }
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      let expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
     }
 
     function show(to_hide, to_show) {
@@ -40,10 +106,62 @@
       return false;
     }
 
+    function show_flex(to_hide, to_show) {
+      document.getElementById(to_show).style.display = 'flex';
+      document.getElementById(to_hide).style.display = 'none';
+      return false;
+    }
+
+
+    function toggle_music() {
+      if (bg_music_is_on) {
+        document.querySelector("#bg_audio").pause();
+        document.querySelector("#bg_music_icon").innerHTML = "music_off";
+        bg_music_is_on = false;
+      }
+      else {
+        document.querySelector("#bg_audio").play();
+        document.querySelector("#bg_music_icon").innerHTML = "music_note";
+        bg_music_is_on = true;
+      }
+    }
+
+    function store_select(to_hide, to_show) {
+      user_city = document.querySelector('#div_city').value;
+      user_store = document.querySelector('#div_store').value;
+      document.getElementById(to_show).style.display = 'block';
+      document.getElementById(to_hide).style.display = 'none';
+      return false;
+    }
+
+    function addStoresforGivenCity() {
+      var selected_city = document.querySelector('#div_city').value;
+      if (selected_city === "") {
+        alert("Please Select a City");
+      }
+      else {
+        var city_dropdown = document.querySelector('#div_store');
+        city_dropdown.innerHTML = "";
+        var new_option = document.createElement("option");
+        new_option.value = "";
+        new_option.innerHTML = "Store";
+        city_dropdown.appendChild(new_option);
+        for (var ele in store_options[selected_city]) {
+          var new_option = document.createElement("option");
+          new_option.value = store_options[selected_city][ele];
+          new_option.innerHTML = store_options[selected_city][ele];
+          city_dropdown.appendChild(new_option);
+        }
+      }
+    }
+
     async function register() {
       var name = document.querySelector("#name").value;
       var number = document.querySelector("#number").value;
       var email = document.querySelector("#email").value;
+
+      user_city = document.querySelector('#div_city').value;
+      user_store = document.querySelector('#div_store').value;
 
       global_name = name;
 
@@ -52,7 +170,6 @@
       var atposition = email.indexOf("@");
       var dotposition = email.lastIndexOf(".");
 
-      console.log(name, number, email);
       if (name == null || name == "") {
         alert("Please enter a Name");
         return false;
@@ -66,13 +183,19 @@
         return false;
       }
 
-      sessionStorage.setItem("op-hp-ar-username", name);
+      // sessionStorage.setItem("op-hp-ar-username", name);
+      setCookie("op-hp-ar-username", name, 365);
       //Loading screen
-      document.getElementById("page3").style.display = 'none';
+      document.getElementById("page4").style.display = 'none';
       document.getElementById("spinner").style.display = 'block';
 
-      sessionStorage.setItem('op-hp-ar-userid', 14);
-      await fetch("https://steponexp.net/game12/insert.php?name="+name+"&number="+number+"&email="+email, { method: 'GET' })
+      // sessionStorage.setItem('op-hp-ar-userid', -1);
+      setCookie('op-hp-ar-userid', -1, 365);
+
+
+      console.log(name, number, email, user_store, user_city);
+      // sessionStorage.setItem("op-hp-ar-userstatus", 'INC');
+      await fetch("https://steponexp.net/game12/insert.php?name=" + name + "&number=" + number + "&email=" + email + "&store=" + user_store + "&city=" + user_city, { method: 'GET' })
         .then(function (response) {
           if (response.status !== 200) {
             console.log('Looks like there was a problem. Status Code: ' + response.status);
@@ -82,9 +205,10 @@
           //{"code":200,"message":"User already exist","response":{"firstinsertid":"18","data":[{"name":"Test1","number":"1010101010","email":"test1@gmail.com","score":"0","id":"18"},{"name":"Test3","number":"1919191919","email":"test3@gmail.com","score":"0","id":"19"}]}}
           response.json().then(function (data) {
             console.log(data);
-            var user_id=-1;
+            var user_id = -1;
             var user_score;
-            if(data.message==="User already exist"){
+            var user_status;
+            if (data.message === "User already exist") {
               // for (let index = 0; index < data.response["data"].length; index++) {
               //   console.log(data.response["data"][index]["number"],number)
               //   if(data.response["data"][index]["number"]===number){
@@ -93,38 +217,62 @@
               //   }
 
               // }
-              user_id=data.response.data[0].id;
-              user_score=data.response.data[0].score;
-              sessionStorage.setItem('op-hp-ar-userid', user_id);
+              user_id = data.response.data[0].id;
+              user_score = data.response.data[0].score;
+              user_status = data.response.data[0].status;
+              // sessionStorage.setItem('op-hp-ar-userid', user_id);
+              setCookie('op-hp-ar-userid', user_id, 365);
+              setCookie("op-hp-ar-userscore", user_score, 365);
+              setCookie("op-hp-ar-user-" + user_id + "-status", user_status, 365);
 
-              // var user_score=data.response["data"][0]['score'];
-              if(user_score===-1 || user_score===0 || user_score===null){
-                window.location.href = "failure.html";
+              // var user_status = sessionStorage.getItem("op-hp-ar-user-" + user_id + "-status");
+              // var user_status = getCookie("op-hp-ar-user-" + user_id + "-status")
+
+              //INC, null : Play
+              //win, lost : Dont Play
+              // if (user_status !== 'INC' && user_status !== "") {
+              if (user_status !== "0") {
+                // console.log("I was here3");
+                // var user_score=data.response["data"][0]['score'];
+                if (user_status=="2") {
+                  window.top.location.replace("failure.html");
+                }
+                else {
+                  // console.log(user_score);
+                  // sessionStorage.setItem("op-hp-ar-userscore", user_score);
+                  window.top.location.replace("success.html");
+                }
               }
-              else{
-                console.log(user_score);
-                sessionStorage.setItem("op-hp-ar-userscore", user_score);
-                window.location.href = "success.html";
-              }  
+              else {
+                // sessionStorage.setItem("op-hp-ar-user-" + user_id + "-status", 'INC');
+                document.getElementById("spinner").style.display = 'none';
+                document.getElementById("page5").style.display = 'block';
+              }
             }
-            else{
+            else {
               //{"code":200,"message":"Data Successfull Saved","response":{"insertid":19}}
-              var user_id=data.response["insertid"];
-              sessionStorage.setItem('op-hp-ar-userid', user_id);
+              var user_id = data.response["insertid"];
+              // sessionStorage.setItem('op-hp-ar-userid', user_id);
+              setCookie('op-hp-ar-userid', user_id, 365);
+              setCookie("op-hp-ar-user-" + user_id + "-status", 0, 365);
               document.getElementById("spinner").style.display = 'none';
-              document.getElementById("page4").style.display = 'block';
+              document.getElementById("page5").style.display = 'block';
+              // await fetch("https://steponexp.net/game12/update.php?id=" + user_id + "&score=INC", { method: 'GET' }).then(function (response) {
+              // });
             }
 
           });
         })
       // //   .catch(error => console.log('error', error));
       // document.getElementById("spinner").style.display = 'none';
-      // document.getElementById("page4").style.display = 'block';
+      // document.getElementById("page5").style.display = 'block';
       return false;
     }
 
     window.addEventListener("orientationchange", function () {
-      if (window.screen.height < window.screen.width) {
+      // console.log("Orientation: ",window.orientation);
+
+      if (window.orientation == 90 || window.orientation == -90) {
         document.getElementsByClassName("screen-rotate-popup")[0].style.display = 'flex';
       }
       else {
@@ -139,7 +287,7 @@
       document.getElementById(to_hide).style.display = 'none';
 
       document.querySelector("#bg_audio").pause();
-      document.querySelector("#bg_music_div").style.display="none";      
+      document.querySelector("#bg_music_div").style.display = "none";
       return false;
     }
   </script>
@@ -181,7 +329,7 @@
     }
 
     body {
-      background-image: url("resources/images/bg-image.svg");
+      background-image: url("resources/images/bg-image.png");
       background-repeat: no-repeat;
       background-position: center;
       background-size: cover;
@@ -214,7 +362,9 @@
       /*7.8% */
 
       object-fit: contain;
-      width: 14em;
+      width: 50%;
+
+      max-width: fit-content;
     }
 
     #op-logo div {
@@ -243,11 +393,14 @@
     }
 
     #page1 {
-      margin-top: 3em;
+      margin-top: 2em;
       justify-content: space-around;
       align-items: center;
       text-align: center;
 
+      flex: 1 1;
+      display: flex;
+      flex-direction: column;
 
       color: white;
 
@@ -257,10 +410,14 @@
     }
 
     #page2 {
-      margin-top: 2.5em;
+      margin-top: 2em;
       align-items: center;
       text-align: center;
+      justify-content: space-between;
 
+      flex: 1 1;
+      display: flex;
+      flex-direction: column;
 
       color: white;
 
@@ -269,8 +426,27 @@
       transition: display 0.5s ease;
     }
 
+    .drop_down {
+      width: 50vw;
+      height: 35px;
+
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 1em;
+      margin-bottom: 1em;
+
+      color: white;
+      background-color: transparent;
+      /* background-color: #C59D62; */
+      border: 1px solid white;
+      border-radius: 5px;
+
+      padding: 5PX;
+    }
+
+
     #page3 {
-      margin-top: 2.5em;
+      margin-top: 2em;
       align-items: center;
       text-align: center;
 
@@ -342,7 +518,25 @@
     }
 
     #page4 {
-      margin-top: 1.5em;
+      margin-top: 2em;
+      width: 100%;
+      justify-content: space-around;
+      align-items: center;
+      text-align: center;
+
+      flex: 1 1;
+      display: flex;
+      flex-direction: column;
+
+      color: white;
+
+      font-size: 24px;
+
+      transition: display 0.5s ease;
+    }
+
+    #page5 {
+      margin-top: 1em;
       align-items: center;
       text-align: center;
 
@@ -372,16 +566,27 @@
       line-height: 24px;
       height: 44px;
       width: 159px;
-      background: #F50514;
+
+      background: transparent;
+      /*#F50514;*/
+      border: 1px solid #C59D62;
       border-radius: 5px;
     }
 
     .prize_text {
       font-size: 18px;
-      position: absolute;
-      bottom: 2em;
-      right: 0;
-      left: 0;
+      width: 100%;
+
+      /* position: absolute; */
+      position: relative;
+      padding-top: 15px;
+      padding-bottom: 10px;
+      /* position: static; */
+      /* margin-top: 4vh; */
+      /* margin-bottom: 4vh; */
+      bottom: 0em;
+      /* right: 0; */
+      /* left: 0; */
     }
 
     #page_camera {
@@ -453,10 +658,12 @@
 </head>
 
 <body>
-  <audio id="bg_audio" autoplay loop src="resources/audio/bg_loop2.mp3"></audio>
-  <div id="bg_music_div" style="position: absolute; top: 0; right: 0; width: auto; z-index: 10; justify-content: end; padding: 5px; margin: 15px; border: 2px solid rgba(255, 255, 255, 0.85); border-radius: 100%;" onclick="toggle_music();">
+  <audio id="bg_audio" loop src="resources/audio/bg_loop2.mp3"></audio>
+  <div id="bg_music_div"
+    style="position: absolute; top: 0; right: 0; width: 17px; height: 17px; z-index: 10; justify-content: end; padding: 5px; margin: 15px; border: 2px solid rgba(255, 255, 255, 0.85); border-radius: 100%;"
+    onclick="toggle_music();">
     <span id="bg_music_icon" class="material-icons" style="color: white; font-size: 17px;">
-      music_note</span>
+      music_off</span>
   </div>
   <div class="screen-rotate-popup" style="display: none; transform: translate(-.5em,-.5em);">
     <div>
@@ -467,46 +674,71 @@
     </div>
   </div>
 
-  <div>
-    <div id="op-logo">
-      <img src="resources/images/op-logo.svg">
-      <div>First ever</div>
+  <div style="height: 100%;  display: flex; flex-direction: column;">
+    <div>
+      <div id="hp-logo">
+        <img src="resources/images/hp-op-logo.png">
+        <!-- <div>First ever</div> -->
+        <p>Treasure Hunt</p>
+      </div>
+      <!-- <div id="hp-logo">
+        <img src="resources/images/hp-op-logo.png">
+      </div> -->
+      <div class="spinner" style="display: none;" id="spinner"></div>
     </div>
-    <div id="hp-logo">
-      <img src="resources/images/hp-logo.png">
-      <p>Treasure Hunt</p>
-    </div>
-    <div class="spinner" style="display: none;" id="spinner"></div>
     <!-- Page 1 -->
     <div id="page1">
-      <div>Are you also a</div>
-      <div style="font-weight: 500;">POTTERHEAD?</div>
-      <div onclick="return show('page1','page2');" class="red-button">
-        <span style="font-size: 18px;">Yes</span>
+      <div>
+        <div>Are you also a</div>
+        <div style="font-weight: 500;">POTTERHEAD?</div>
+        <div onclick="show_flex('page1','page2'); toggle_music(); openFullscreen();" class="red-button">
+          <span style="font-size: 18px;">Yes</span>
+        </div>
       </div>
+      <!-- <div style="display: flex; justify-content: space-between; flex-direction: column; height: max-content;"> -->
+      <!-- <div id="_flex_box" style="flex: 1 1 auto; background-color: #F50514;"></div> -->
       <div class="prize_text">
         <div>Top scorer each day shall win</div>
-        <div style="font-weight: 800;">1 Limited Edition Harry Potter Watch!</div>
+        <div style="font-weight: 800;">Harry Potter Goodies!</div>
       </div>
+      <!-- </div> -->
     </div>
     <!-- Page 2 -->
     <div id="page2" style="display:none">
-      <div>Find Voldemort’s</div>
-      <div>7 Horcruxes hidden at the</div>
-      <div>OnePlus Store</div>
-      <div onclick="return show('page2','page3')" class="red-button">
-        <span style="font-size: 18px;">Let's Begin</span>
+      <div>
+        <div>Find Voldemort’s</div>
+        <div>7 Horcruxes hidden at the</div>
+        <div>OnePlus Store</div>
+        <!-- <form onsubmit="return store_select('page2','page3');">
+        <div>
+          <select class="drop_down" required="required" id="div_city" name="div_years"
+            onchange="addStoresforGivenCity();">
+            <option value="">City</option>
+          </select>
+        </div>
+        <div>
+          <select class="drop_down" required="required" id="div_store" name="div_sections">
+            <option value="">Store</option>
+          </select>
+        </div>
+        <button class="red-button">
+          <span style="font-size: 18px;">Let's Begin</span>
+        </button>
+      </form> -->
+        <button class="red-button" onclick="show('page2','page3')">
+          <span style="font-size: 18px;">Let's Begin</span>
+        </button>
       </div>
       <div class="prize_text">
         <div>Top scorer each day shall win</div>
-        <div style="font-weight: 800;">1 Limited Edition Harry Potter Watch!</div>
+        <div style="font-weight: 800;">Harry Potter Goodies!</div>
       </div>
     </div>
     <!-- Page 3 -->
     <div id="page3" style="display:none">
       <!-- <div id="page3"> -->
       <div>Register Below</div>
-      <form id="register" onsubmit="register(); return false;">
+      <form id="register" onsubmit="show_flex('page3','page4'); return false;">
         <input type="text" id="name" name="name" placeholder="Name" required><br>
         <input type="number" id="number" name="number" placeholder="Mobile No." pattern="[0-9]{10}" required><br>
         <input type="email" id="email" name="email" placeholder="Email ID" required>
@@ -517,18 +749,46 @@
     </div>
     <!-- Page 4 -->
     <div id="page4" style="display:none">
+      <div>
+        <div>Register Below</div>
+        <form onsubmit="register(); return false;">
+          <div>
+            <select class="drop_down" required="required" id="div_city" name="div_years"
+              onchange="addStoresforGivenCity();">
+              <option value="">City</option>
+            </select>
+          </div>
+          <div>
+            <select class="drop_down" required="required" id="div_store" name="div_sections">
+              <option value="">Store</option>
+            </select>
+          </div>
+          <button class="red-button">
+            <span style="font-size: 18px;">Let's Begin</span>
+          </button>
+        </form>
+      </div>
+      <!-- <div class="prize_text">
+        <div>Top scorer each day shall win</div>
+        <div style="font-weight: 800;">Harry Potter Goodies!</div>
+      </div> -->
+    </div>
+    <!-- Page 5 -->
+    <div id="page5" style="display:none">
       <div>Rules for the game</div>
-      <div style="font-size: 18px; padding: 10px; margin: 10px; margin-bottom: 5px; padding-bottom: 0px; line-height: 25px;">
+      <div
+        style="font-size: 18px; padding: 10px; margin: 10px; margin-bottom: 5px; padding-bottom: 0px; line-height: 25px; margin-left: 0px;">
         <ol style="text-align: left">
           <li><span style="position: relative;left: 10px;">Each of the 7 Horcruxes are hidden within the store in the
               form of QR codes.</span></li>
           <li><span style="position: relative;left: 10px;">Upon scanning a QR code, you solve a clue.</span></li>
-          <li><span style="position: relative;left: 10px;">Countdown starts after scanning the first QR code.</span></li>
+          <li><span style="position: relative;left: 10px;">Countdown starts after scanning the first QR code.</span>
+          </li>
           <li><span style="position: relative;left: 10px;">You must try to finsh the hunt as quickly as possible to win
               the prize.</span></li>
         </ol>
       </div>
-      <div onclick="return show_ar('page4','page_camera')" class="red-button">
+      <div onclick="return show_ar('page5','page_camera')" class="red-button">
         <span style="font-size: 18px;">Start</span>
       </div>
     </div>
