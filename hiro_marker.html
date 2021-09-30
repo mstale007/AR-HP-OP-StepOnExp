@@ -27,13 +27,22 @@
             "Clue 07",
         ]
 
+        // var horcrux_names = [
+        //     "Tom Riddle's Diary",
+        //     "Resurrection Stone Ring",
+        //     "Salazar Slytherin's Locket",
+        //     "Helga Hufflepuff's Cup",
+        //     "Rowena Ravenclaw's Diadem",
+        //     "Nagini The Snake",
+        //     "Harry Potter"
+        // ]
         var horcrux_names = [
-            "Tom Riddle's Diary",
-            "Resurrection Stone Ring",
-            "Salazar Slytherin's Locket",
-            "Helga Hufflepuff's Cup",
-            "Rowena Ravenclaw's Diadem",
-            "Nagini The Snake",
+            "The Diary",
+            "The Ring",
+            "The Locket",
+            "The Cup",
+            "The Diadem",
+            "The Snake",
             "Harry Potter"
         ]
         var clues = ["Created in the girls bathroom on the first floor of Hogwarts, To find this clue you may have to look downwards!",
@@ -166,15 +175,15 @@
                 console.log("Elapsed Time: " + user_time_elapsed)
                 start_timer(user_time_elapsed);
             }
-            else if (user_status !== 0) {
+            else if (user_status !== '0') {
                 // var user_score = parseInt(sessionStorage.getItem("op-hp-ar-userscore"));
                 var user_score = parseInt(getCookie("op-hp-ar-userscore"));
                 // console.log(user_score === time_limit * 60);
                 // console.log("I was here");
-                if (user_status === 1) {
+                if (user_status === '1') {
                     window.top.location.replace("success.html");
                 }
-                else if (user_status === 2) {
+                else if (user_status === '2') {
                     window.top.location.replace("failure.html");
                 }
             }
@@ -749,7 +758,7 @@
     <div id="found_popup" class="popup" style="bottom:42%; top:auto; display: none;">
         <div id="found_popup_bg">
             <div id="found_popup_text1" style="font-size: 18px;">You found Clue 01!</div>
-            <div id="found_popup_text2" style="font-size: 24px;">Tom Riddle’s Diary</div>
+            <div id="found_popup_text2" style="font-size: 24px;">Tom The Diary</div>
         </div>
     </div>
     <!-- Winpopup -->

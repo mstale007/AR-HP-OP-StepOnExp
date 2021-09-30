@@ -157,13 +157,10 @@
       }
     }
 
-    async function register() {
+    function check_inputs_and_next(to_hide,to_show){
       var name = document.querySelector("#name").value;
       var number = document.querySelector("#number").value;
       var email = document.querySelector("#email").value;
-
-      user_city = document.querySelector('#div_city').value;
-      user_store = document.querySelector('#div_store').value;
 
       global_name = name;
 
@@ -184,6 +181,38 @@
         alert("Please enter a valid e-mail address");
         return false;
       }
+
+      show_flex('page3','page4');
+      return false;
+    }
+
+    async function register() {
+      var name = document.querySelector("#name").value;
+      var number = document.querySelector("#number").value;
+      var email = document.querySelector("#email").value;
+
+      user_city = document.querySelector('#div_city').value;
+      user_store = document.querySelector('#div_store').value;
+
+      global_name = name;
+
+      // var phoneno = /^\d{10}$/;
+
+      // var atposition = email.indexOf("@");
+      // var dotposition = email.lastIndexOf(".");
+
+      // if (name == null || name == "") {
+      //   alert("Please enter a Name");
+      //   return false;
+      // }
+      // else if (number.length !== 10) {
+      //   alert("Please enter a valid 10-digit mobile number");
+      //   return false;
+      // }
+      // else if (atposition < 1 || dotposition < atposition + 2 || dotposition + 2 >= email.length) {
+      //   alert("Please enter a valid e-mail address");
+      //   return false;
+      // }
 
       // sessionStorage.setItem("op-hp-ar-username", name);
       setCookie("op-hp-ar-username", name, 365);
@@ -740,7 +769,7 @@
     <div id="page3" style="display:none">
       <!-- <div id="page3"> -->
       <div>Register Below</div>
-      <form id="register" onsubmit="show_flex('page3','page4'); return false;">
+      <form id="register" onsubmit="check_inputs_and_next('page3','page4'); return false;">
         <input type="text" id="name" name="name" placeholder="Name" required><br>
         <input type="number" id="number" name="number" placeholder="Mobile No." pattern="[0-9]{10}" required><br>
         <input type="email" id="email" name="email" placeholder="Email ID" required>
@@ -784,8 +813,7 @@
           <li><span style="position: relative;left: 10px;">Each of the 7 Horcruxes are hidden within the store in the
               form of QR codes.</span></li>
           <li><span style="position: relative;left: 10px;">Upon scanning a QR code, you solve a clue.</span></li>
-          <li><span style="position: relative;left: 10px;">Countdown starts after scanning the first QR code.</span>
-          </li>
+          <!-- <li><span style="position: relative;left: 10px;">Countdown starts after scanning the first QR code.</span></li> -->
           <li><span style="position: relative;left: 10px;">You must try to finsh the hunt as quickly as possible to win
               the prize.</span></li>
         </ol>
