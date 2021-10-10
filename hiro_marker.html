@@ -1,3 +1,6 @@
+<!-- Changelog:
+1. iframe src set initially directly
+2. Portal -->
 <!DOCTYPE html>
 <html>
 
@@ -45,12 +48,12 @@
             "The Snake",
             "Harry Potter"
         ]
-        var clues = ["Created in the girls bathroom on the first floor of Hogwarts, To find this clue you may have to look downwards!",
-            "You can wear it in your hand, Oh! By the way, did you check out the All new OnePlus wrist band?",
-            "Voldemort's mother originally owned this piece of ornament. If you want your 3rd clue, Please take the store manager's consent.",
-            "Helga Hufflepuff owned this Horcrux. Don’t make a big fuss. Before you start looking through, Have a look at the latest OnePlus Nord 2.",
-            "Rowena Ravenclaw wore this as a badge of Royalty. We display our logo ‘Never Settle’ with utmost loyalty.",
-            "You need to learn Parseltongue to find the next clue. Just kidding, head to the checkout counter for review, upon finding this too, your 10% discount is definitely due.",
+        var clues = ["Created in a private space on the first floor, To find this clue you may have to look go near the door",
+            "You can wear it in your hand, Oh! By the way, Did you check out the All new OnePlus wrist band?",
+            "Voldemort’s mother originally owned this piece of ornament. If you want your 2nd clue, Please take the store manager’s consent.",
+            "Helga Hufflepuff owned this Horcrux. Don’t make a big fuss. Before you start looking through, Have a  look at the latest OnePlus Nord 2.",
+            "The badge of Royalty was worn by Rowena Ravenclaw. When you entered, do you remember what you saw?",
+            "You need to learn Parsel tongue to find the next clue. Just kidding, head to the checkout counter for review, upon finding this too, your reward is definitely due.",
             "He who killed “the one who shall not be named”, Sit down and relax, if you don’t find this clue, You’re the one to be blamed."];
 
         var markers_found = [
@@ -105,6 +108,7 @@
             return "";
         }
 
+
         window.onload = function () {
             setTimeout(function () {
                 document.querySelector("#start_popup").style.opacity = 0;
@@ -122,10 +126,13 @@
             user_progress = getCookie('op-hp-ar-user-' + user_id + '-progress');
             user_status = getCookie("op-hp-ar-user-" + user_id + "-status");
 
+            console.log("Timer Started: ", is_timer_started);
+
             //Timer started
             //true: Continue progress
             //false: Start the Game
-            if (is_timer_started !== "" && user_progress !== "" && user_status === "0") {
+            // if (is_timer_started !== "" && user_progress !== "" && user_status === "0") {
+            if (is_timer_started !== "" && user_progress !== "") {
                 // if (user_status===0) {
                 //Continue from time elapsed
                 // user_time_elapsed = sessionStorage.getItem('op-hp-ar-user-' + user_id + '-timerelapsed');
@@ -189,6 +196,16 @@
             }
         }
 
+        AFRAME.registerComponent('log', {
+            schema: { type: 'string' },
+
+            init: function () {
+                // parent.openFullscreen();
+                var stringToLog = this.data;
+                console.log(stringToLog);
+            }
+        });
+
         AFRAME.registerComponent('registerevents', {
             init: function () {
                 const marker = this.el;
@@ -214,11 +231,18 @@
                         else {
                             document.querySelector("#sfx_audio").play();
                         }
+                        if (model_name === "#Model_M1") {
+                            // setTimeout(function () {
+                            //     document.querySelector(model_name).emit('popout', null, false);
+                            //     var indicator = document.querySelector(indicator_name);
+                            //     indicator.innerHTML = img_src[marker_number - 1];
+                            // }, 7500);
+                        }
 
                         //Found Popup
                         document.querySelector('#found_popup').style.display = 'flex';
                         document.querySelector('#found_popup_text1').innerHTML = "You found Clue 0" + marker_number + "!"
-                        document.querySelector('#found_popup_text2').innerHTML = horcrux_names[marker_number - 1];
+                        document.querySelector('#found_popup_text2').innerHTML = "Clue 0"+marker_number;
                         document.querySelector('#found_popup').style.opacity = 1;
 
                         setTimeout(function () {
@@ -228,6 +252,7 @@
                             }, 1000);
                         }, 3000)
                     }
+
                     markers_found[marker_number - 1] = true;
                     clue_title[marker_number - 1] = horcrux_names[marker_number - 1];
 
@@ -251,10 +276,11 @@
                     //Popup animation
                     // console.log(model_name);
                     document.querySelector(model_name).emit('popup', null, false);
+                    // document.querySelector(model_name+"_Portal").emit('popup', null, false);
 
                     var indicator = document.querySelector(indicator_name);
-                    indicator.style.boxShadow = "rgba(1, 120, 255, 1) 0px 0px 20px";
                     indicator.innerHTML = img_src[marker_number - 1];
+                    indicator.style.boxShadow = "rgba(1, 120, 255, 1) 0px 0px 20px";
 
                     var all_found = true;
                     for (let index = 0; index < markers_found.length; index++) {
@@ -285,7 +311,6 @@
                         }
                         // console.log("Everythong score related", minutes, seconds, user_time_elapsed, total_time);
                         setTimeout(function () {
-
                             document.getElementById('win-popup').style.opacity = 1;
                             setTimeout(function () {
                                 update_and_redirect('win', total_time);
@@ -367,10 +392,10 @@
             // setCookie("op-hp-ar-user-" + user_id + "-status", result);
             var user_status;
             if (result === 'win') {
-                user_status=1;
+                user_status = 1;
             }
             else {
-                user_status=2;
+                user_status = 2;
             }
 
 
@@ -612,6 +637,18 @@
             animation: rotation 5s infinite linear;
         }
 
+        .item_gif {
+            position: absolute;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+
+            left: 515px;
+
+            padding: 0px;
+            margin: 10px;
+        }
+
         @-webkit-keyframes rotation {
             from {
                 -webkit-transform: rotate(0deg);
@@ -758,7 +795,7 @@
     <div id="found_popup" class="popup" style="bottom:42%; top:auto; display: none;">
         <div id="found_popup_bg">
             <div id="found_popup_text1" style="font-size: 18px;">You found Clue 01!</div>
-            <div id="found_popup_text2" style="font-size: 24px;">Tom The Diary</div>
+            <div id="found_popup_text2" style="font-size: 24px;">The Diary</div>
         </div>
     </div>
     <!-- Winpopup -->
@@ -810,7 +847,7 @@
 
     <!--Camera Part-->
     <a-scene vr-mode-ui=" enabled: false" color-space="sRGB" renderer="gammaOutput: true" embedded
-        arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;'>
+        arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;' >
         <!-- <a-entity light="type: ambient; color: #BBB"></a-entity>
         <a-entity light="type: directional; color: #FFF; intensity: 0.6" position="-0.5 1 1"></a-entity> -->
 
@@ -828,12 +865,20 @@
                     animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
                 </a-torus-knot>
             </a-box> -->
-            <a-entity id="Model_M1" gltf-model="resources\models\diary2.glb" rotation='0 -45 0' scale='0 0 0'
-                animation="property: rotation; to:0 -45 360; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:0.5 0.5 0.5; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+            <a-entity id="Model_M1" gltf-model="resources\models\diary2.glb" position="0 .5 0" rotation='0 -45 0'
+                scale='0 0 0' animation="property: rotation; to:0 -45 360; dur: 10000; easing: linear; loop: true"
+                animation__2="property: scale; to:0.5 0.5 0.5; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
                 <!-- "property: scale; to:0.5 0.5 0.5; dur: "+popup_animation_time+"; easing: easeOutElastic;" -->
-                </a-animation>
             </a-entity>
+            <!-- <a-entity gltf-model="resources\models\Portal\portal_test.gltf">
+
+            </a-entity> -->
+            <!-- <a-image id="Model_M1_Portal" src="resources\models\Portal\textures\Material.001_diffuse.png" rotation='90 0 0' scale='0 0 0'
+            animation="property: rotation; to:90 360 0; dur: 10000; easing: linear; loop: true"
+            animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+            animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;"></a-image>
+            <a-plane color="#fff"></a-plane> -->
         </a-marker>
 
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-ring.patt" id="M2">
