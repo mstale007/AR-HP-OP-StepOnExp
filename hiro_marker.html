@@ -13,6 +13,7 @@
     <!-- we import arjs version without NFT but with marker + location based support -->
     <script src="js/arframe-ar.js"></script>
     <!-- https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js -->
+    <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
 
     <script>
         var time_limit = 20;
@@ -41,20 +42,20 @@
         // ]
         var horcrux_names = [
             "The Diary",
-            "The Ring",
+            "The Stone Ring",
             "The Locket",
             "The Cup",
-            "The Diadem",
+            "The Crown",
             "The Snake",
-            "Harry Potter"
+            "The Hero"
         ]
-        var clues = ["Created in a private space on the first floor, To find this clue you may have to look go near the door",
-            "You can wear it in your hand, Oh! By the way, Did you check out the All new OnePlus wrist band?",
-            "Voldemort’s mother originally owned this piece of ornament. If you want your 2nd clue, Please take the store manager’s consent.",
-            "Helga Hufflepuff owned this Horcrux. Don’t make a big fuss. Before you start looking through, Have a  look at the latest OnePlus Nord 2.",
-            "The badge of Royalty was worn by Rowena Ravenclaw. When you entered, do you remember what you saw?",
-            "You need to learn Parsel tongue to find the next clue. Just kidding, head to the checkout counter for review, upon finding this too, your reward is definitely due.",
-            "He who killed “the one who shall not be named”, Sit down and relax, if you don’t find this clue, You’re the one to be blamed."];
+        var clues = ["Created in the private space on the first floor, to find it you must reach the entrance of nearest OnePlus store",
+            "You can wear it in your hand. Oh, by the way did you check out the new OnePlus wrist band?",
+            "Master magician’s mother owned this piece of ornament. If you want your third clue please take the store manager’s consent.",
+            "Hufflepuff owned this treasure so start looking through. Its time to experience the latest OnePlus Nord 2",
+            "This badge of Royalty was worn by Ravenclaw. On the right, just outside… you think you saw?",
+            "You need to learn Parsel to find the next clue. Just kidding, get to the billing counter to find this too.",
+            "He who killed the master magician… only the magical watch can get you this one!!"];
 
         var markers_found = [
             false,
@@ -196,16 +197,6 @@
             }
         }
 
-        AFRAME.registerComponent('log', {
-            schema: { type: 'string' },
-
-            init: function () {
-                // parent.openFullscreen();
-                var stringToLog = this.data;
-                console.log(stringToLog);
-            }
-        });
-
         AFRAME.registerComponent('registerevents', {
             init: function () {
                 const marker = this.el;
@@ -222,6 +213,7 @@
                     // console.log('Marker Found: ', markerId);
 
                     var marker_number = markerId[1];
+                    //First Time
                     if (markers_found[marker_number - 1] === false) {
                         console.log("Marker Number", marker_number);
                         //Play sfx
@@ -231,13 +223,12 @@
                         else {
                             document.querySelector("#sfx_audio").play();
                         }
-                        if (model_name === "#Model_M1") {
-                            // setTimeout(function () {
-                            //     document.querySelector(model_name).emit('popout', null, false);
-                            //     var indicator = document.querySelector(indicator_name);
-                            //     indicator.innerHTML = img_src[marker_number - 1];
-                            // }, 7500);
-                        }
+                        //Popout/Vanish For first Time
+                        setTimeout(function () {
+                            document.querySelector(model_name).emit('popout', null, false);
+                            var indicator = document.querySelector(indicator_name);
+                            indicator.innerHTML = img_src[marker_number - 1];
+                        }, 7500);
 
                         //Found Popup
                         document.querySelector('#found_popup').style.display = 'flex';
@@ -279,7 +270,7 @@
                     // document.querySelector(model_name+"_Portal").emit('popup', null, false);
 
                     var indicator = document.querySelector(indicator_name);
-                    indicator.innerHTML = img_src[marker_number - 1];
+                    // indicator.innerHTML = img_src[marker_number - 1];
                     indicator.style.boxShadow = "rgba(1, 120, 255, 1) 0px 0px 20px";
 
                     var all_found = true;
@@ -847,7 +838,8 @@
 
     <!--Camera Part-->
     <a-scene vr-mode-ui=" enabled: false" color-space="sRGB" renderer="gammaOutput: true" embedded
-        arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;' >
+        arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;' 
+        renderer="logarithmicDepthBuffer: true;">
         <!-- <a-entity light="type: ambient; color: #BBB"></a-entity>
         <a-entity light="type: directional; color: #FFF; intensity: 0.6" position="-0.5 1 1"></a-entity> -->
 
@@ -865,13 +857,13 @@
                     animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
                 </a-torus-knot>
             </a-box> -->
-            <a-entity id="Model_M1" gltf-model="resources\models\diary2.glb" position="0 .5 0" rotation='0 -45 0'
+            <a-entity id="Model_M1" gltf-model="resources\models\diary.glb" position="0 .5 0" rotation='0 -45 0'
                 scale='0 0 0' animation="property: rotation; to:0 -45 360; dur: 10000; easing: linear; loop: true"
                 animation__2="property: scale; to:0.5 0.5 0.5; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
                 <!-- "property: scale; to:0.5 0.5 0.5; dur: "+popup_animation_time+"; easing: easeOutElastic;" -->
             </a-entity>
-            <!-- <a-entity gltf-model="resources\models\Portal\portal_test.gltf">
+            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
 
             </a-entity> -->
             <!-- <a-image id="Model_M1_Portal" src="resources\models\Portal\textures\Material.001_diffuse.png" rotation='90 0 0' scale='0 0 0'
@@ -889,9 +881,14 @@
                 </a-box> -->
             <a-entity id="Model_M2" gltf-model="resources\models\ring2.glb" rotation='0 0 0' scale='0 0 0'
                 animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:0.1 0.1 0.1; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+                animation__2="property: scale; to:0.1 0.1 0.1; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
                 <!-- <a-entity light="type: point; intensity: 1; distance: 50; decay: 2" position="0 0 0"></a-entity> -->
             </a-entity>
+
+            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+
+            </a-entity> -->
         </a-marker>
 
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-locket.patt" id="M3">
@@ -903,9 +900,14 @@
             <!-- <a-entity light="type: spot; angle: 90; intensity:50" position="0 10 10"></a-entity> -->
             <a-entity id="Model_M3" gltf-model="resources\models\locket2.glb" rotation='0 0 0' scale='0 0 0'
                 animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:0.2 0.2 0.2; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+                animation__2="property: scale; to:0.2 0.2 0.2; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
 
             </a-entity>
+
+            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+
+            </a-entity> -->
         </a-marker>
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-cup.patt" id="M4">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
@@ -915,8 +917,13 @@
             </a-box> -->
             <a-entity id="Model_M4" gltf-model="resources\models\cup2.glb" rotation='0 0 0' scale='0 0 0'
                 animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:10 10 10; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+                animation__2="property: scale; to:10 10 10; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
+
+            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+
+            </a-entity> -->
         </a-marker>
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-diadem.patt" id="M5">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
@@ -930,8 +937,13 @@
             <!-- animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true" -->
             <a-entity id="Model_M5" gltf-model="resources\models\diadem2.glb" rotation='0 0 0' scale='0 0 0'
                 animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:0.01 0.01 0.01; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+                animation__2="property: scale; to:0.01 0.01 0.01; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
+
+            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+
+            </a-entity> -->
         </a-marker>
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-snake.patt" id="M6">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
@@ -941,8 +953,13 @@
     </a-box> -->
             <a-entity id="Model_M6" gltf-model="resources\models\snake.glb" position='-1 0 1' rotation='0 0 0'
                 scale='0 0 0' elasticity="1000"
-                animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+                animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
+
+            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+
+            </a-entity> -->
         </a-marker>
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-harry.patt" id="M7">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
@@ -950,10 +967,15 @@
         animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
     </a-torus-knot>
     </a-box> -->
-            <a-entity id="Model_M7" gltf-model="resources\models\harry.glb" rotation='0 0 0' scale='0 0 0'
+            <a-entity id="Model_M7" gltf-model="resources\models\harry2.glb" rotation='0 0 0' scale='0 0 0'
                 animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;">
+                animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
+
+            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+
+            </a-entity> -->
         </a-marker>
         <!-- <a-camera-static/> -->
         <a-entity camera></a-entity>

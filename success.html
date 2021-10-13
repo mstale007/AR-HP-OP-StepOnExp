@@ -42,7 +42,7 @@
             // var score = sessionStorage.getItem("op-hp-ar-userscore");
             var score = getCookie("op-hp-ar-userscore");
             if (score === "") {
-                score = 650;
+                score = -1;
             }
             var minutes = Math.floor(score / 60);
             var seconds = score % 60;
@@ -58,7 +58,9 @@
                     score_text = score_text + padded_time[index];
                 }
             }
-            document.getElementById("user-score").innerHTML = score_text;
+            if(score!==-1){
+                document.getElementById("user-score").innerHTML = score_text;
+            }
         };
 
     </script>
@@ -168,7 +170,7 @@
                 <div id="user_congrats">Congratulations!</div>
                 <div style="margin-top: 60px;">You have successfully</div>
                 <div>finished the hunt</div>
-                <div id="user-score">in 00:00</div>
+                <div id="user-score"></div>
             </div>
             <div style="position: relative; bottom: 0; font-size: 18px; margin-top: 17px; padding: 10px;">Winners will be announced today on Instagram</div>
         </div>
