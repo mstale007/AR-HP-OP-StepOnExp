@@ -1,6 +1,6 @@
 <!-- Changelog:
-1. iframe src set initially directly
-2. Portal -->
+2. Portal
+3. Parse Int -->
 <!DOCTYPE html>
 <html>
 
@@ -147,7 +147,7 @@
                         first_marker_found = true;
                         clue_title[i] = horcrux_names[i];
                         var indicator = document.querySelector("#Indicator_M" + (i + 1));
-                        indicator.style.boxShadow = "rgba(1, 120, 255, 1) 0px 0px 20px";
+                        indicator.style.boxShadow = "rgba(158, 248, 221, 1) 0px 0px 20px";
                         indicator.innerHTML = img_src[i];
                     }
                     else {
@@ -166,7 +166,7 @@
                     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
                     if (user_time_elapsed === "") {
-                        var total_time = minutes * 60 + seconds;
+                        var total_time = minutes * 60 + parseInt(seconds);
                     }
                     else {
                         var total_time = minutes * 60 + parseInt(seconds) + parseInt(user_time_elapsed);
@@ -208,6 +208,7 @@
                     var markerId = marker.id;
                     var indicator_name = "#Indicator_" + markerId;
                     var model_name = "#Model_" + markerId;
+                    var portal_name = model_name + "_Portal";
 
                     // console.log('Indicator: ', indicator_name);
                     // console.log('Marker Found: ', markerId);
@@ -226,6 +227,7 @@
                         //Popout/Vanish For first Time
                         setTimeout(function () {
                             document.querySelector(model_name).emit('popout', null, false);
+                            document.querySelector(portal_name).emit('popout', null, false);
                             var indicator = document.querySelector(indicator_name);
                             indicator.innerHTML = img_src[marker_number - 1];
                         }, 7500);
@@ -233,7 +235,7 @@
                         //Found Popup
                         document.querySelector('#found_popup').style.display = 'flex';
                         document.querySelector('#found_popup_text1').innerHTML = "You found Clue 0" + marker_number + "!"
-                        document.querySelector('#found_popup_text2').innerHTML = "Clue 0"+marker_number;
+                        document.querySelector('#found_popup_text2').innerHTML = "Clue 0" + marker_number;
                         document.querySelector('#found_popup').style.opacity = 1;
 
                         setTimeout(function () {
@@ -256,7 +258,7 @@
                     document.getElementById("clue-description").innerHTML = clues[marker_number - 1];
 
                     if (nav_closed) {
-                        var translate_height = document.getElementById("bottom-drawer").offsetHeight - (document.getElementById("collapsebutton").offsetHeight + document.getElementById("clue-number").offsetHeight + document.getElementById("clue-description").offsetHeight);
+                        var translate_height = parseInt(document.getElementById("bottom-drawer").offsetHeight) - parseInt((document.getElementById("collapsebutton").offsetHeight) + parseInt(document.getElementById("clue-number").offsetHeight) + parseInt(document.getElementById("clue-description").offsetHeight));
                         document.getElementById("bottom-drawer").style.transform = "translateY(" + translate_height + "px)";
                     }
                     // else{
@@ -267,11 +269,11 @@
                     //Popup animation
                     // console.log(model_name);
                     document.querySelector(model_name).emit('popup', null, false);
-                    // document.querySelector(model_name+"_Portal").emit('popup', null, false);
+                    document.querySelector(portal_name).emit('popup', null, false);
 
                     var indicator = document.querySelector(indicator_name);
                     // indicator.innerHTML = img_src[marker_number - 1];
-                    indicator.style.boxShadow = "rgba(1, 120, 255, 1) 0px 0px 20px";
+                    indicator.style.boxShadow = "rgba(158, 248, 221, 1) 0px 0px 20px";
 
                     var all_found = true;
                     for (let index = 0; index < markers_found.length; index++) {
@@ -295,7 +297,7 @@
 
 
                         if (user_time_elapsed === "") {
-                            var total_time = minutes * 60 + seconds;
+                            var total_time = minutes * 60 + parseInt(seconds);
                         }
                         else {
                             var total_time = (minutes * 60) + parseInt(seconds) + parseInt(user_time_elapsed);
@@ -335,8 +337,9 @@
         }
 
         function start_timer(time_elapsed = 0) {
+            console.log("start_timer called: " + time_elapsed);
             startTime = new Date().getTime();
-            endTime = new Date(startTime + (time_limit * 60000) - ((parseInt(time_elapsed)) * 1000));
+            endTime = new Date(parseInt(startTime) + parseInt(time_limit * 60000) - ((parseInt(time_elapsed)) * 1000));
             setInterval(function () {
                 var now = new Date().getTime();
 
@@ -351,10 +354,13 @@
                     minutes_left = minutes_left < 10 ? "0" + minutes_left : minutes_left;
                     seconds_left = seconds_left < 10 ? "0" + seconds_left : seconds_left;
                     document.getElementById("timercounter").innerHTML = minutes_left.toString() + ":" + seconds_left.toString();
-                    var tmp = minutes_left * 60 + seconds_left;
-                    tmp = time_limit * 60 - tmp;
+                    var time_elapsed_local = minutes_left * 60 + parseInt(seconds_left);
+                    var time_elapsed_local2 = time_limit * 60 - parseInt(time_elapsed_local);
                     // sessionStorage.setItem('op-hp-ar-user-' + user_id + '-timerelapsed', tmp);
-                    setCookie('op-hp-ar-user-' + user_id + '-timerelapsed', tmp, 365);
+                    console.log("Saving Time elapse: " + time_elapsed_local2 + " Time Limit: " + time_limit + " Time elapsed Local: " + time_elapsed_local);
+                    if (time_elapsed_local2 >= 0) {
+                        setCookie('op-hp-ar-user-' + user_id + '-timerelapsed', time_elapsed_local2, 365);
+                    }
                 }
                 if (minutes_left < 0) {
                     //Timeout
@@ -418,7 +424,7 @@
         function closeNav() {
             // console.log("In Close");
             nav_closed = true;
-            var translate_height = document.getElementById("bottom-drawer").offsetHeight - (document.getElementById("collapsebutton").offsetHeight + document.getElementById("clue-number").offsetHeight + document.getElementById("clue-description").offsetHeight);
+            var translate_height = parseInt(document.getElementById("bottom-drawer").offsetHeight) - parseInt((document.getElementById("collapsebutton").offsetHeight) + parseInt(document.getElementById("clue-number").offsetHeight) + parseInt(document.getElementById("clue-description").offsetHeight));
             document.getElementById("bottom-drawer").style.transform = "translateY(" + translate_height + "px)";
             document.getElementById("toggleslide").setAttribute('onClick', "openNav()");
             document.getElementById("toggleslide").innerHTML = 'expand_less';
@@ -514,7 +520,7 @@
             left: 0;
             width: 100%;
             height: 40%;
-            background: white;
+            background: black;
 
             z-index: 10;
             border-radius: 2em 2em 0 0;
@@ -539,6 +545,8 @@
             padding: 10px;
             padding-top: 2.5px;
             font-size: 20px;
+
+            color: white;
         }
 
         .container {
@@ -583,7 +591,7 @@
             padding: 5px;
             margin: 10px;
 
-            background: #fff;
+            background: white;
             /* border: 2px solid #F50514; */
             border: 2px solid #C59D62;
             /* background-image: url('resources/images/reveal_effect.png');
@@ -838,7 +846,7 @@
 
     <!--Camera Part-->
     <a-scene vr-mode-ui=" enabled: false" color-space="sRGB" renderer="gammaOutput: true" embedded
-        arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;' 
+        arjs='debugUIEnabled: false; sourceType: webcam; patternRatio: 0.85; trackingMethod: best;'
         renderer="logarithmicDepthBuffer: true;">
         <!-- <a-entity light="type: ambient; color: #BBB"></a-entity>
         <a-entity light="type: directional; color: #FFF; intensity: 0.6" position="-0.5 1 1"></a-entity> -->
@@ -863,14 +871,13 @@
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
                 <!-- "property: scale; to:0.5 0.5 0.5; dur: "+popup_animation_time+"; easing: easeOutElastic;" -->
             </a-entity>
-            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+            <a-entity id="Model_M1_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+                animation-mixer="loop: repeat" scale="0 0 0"
+                animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
 
-            </a-entity> -->
-            <!-- <a-image id="Model_M1_Portal" src="resources\models\Portal\textures\Material.001_diffuse.png" rotation='90 0 0' scale='0 0 0'
-            animation="property: rotation; to:90 360 0; dur: 10000; easing: linear; loop: true"
-            animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;"
-            animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;"></a-image>
-            <a-plane color="#fff"></a-plane> -->
+            </a-entity>
+
         </a-marker>
 
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-ring.patt" id="M2">
@@ -879,16 +886,19 @@
                     animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
                 </a-torus-knot>
                 </a-box> -->
-            <a-entity id="Model_M2" gltf-model="resources\models\ring2.glb" rotation='0 0 0' scale='0 0 0'
+            <a-entity id="Model_M2" gltf-model="resources\models\ring2.glb" rotation='0 0 0' scale='0 0 0' position="0 .25 0"
                 animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:0.1 0.1 0.1; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__2="property: scale; to:0.07 0.07 0.07; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
                 <!-- <a-entity light="type: point; intensity: 1; distance: 50; decay: 2" position="0 0 0"></a-entity> -->
             </a-entity>
 
-            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+            <a-entity id="Model_M2_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+                animation-mixer="loop: repeat" scale="0 0 0"
+                animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
 
-            </a-entity> -->
+            </a-entity>
         </a-marker>
 
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-locket.patt" id="M3">
@@ -905,9 +915,12 @@
 
             </a-entity>
 
-            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+            <a-entity id="Model_M3_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+                animation-mixer="loop: repeat" scale="0 0 0"
+                animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
 
-            </a-entity> -->
+            </a-entity>
         </a-marker>
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-cup.patt" id="M4">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
@@ -915,15 +928,18 @@
                 animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
             </a-torus-knot>
             </a-box> -->
-            <a-entity id="Model_M4" gltf-model="resources\models\cup2.glb" rotation='0 0 0' scale='0 0 0'
+            <a-entity id="Model_M4" gltf-model="resources\models\cup2.glb" rotation='0 0 0' scale='0 0 0' position="0 .05 0"
                 animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
                 animation__2="property: scale; to:10 10 10; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
 
-            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+            <a-entity id="Model_M4_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+                animation-mixer="loop: repeat" scale="0 0 0"
+                animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
 
-            </a-entity> -->
+            </a-entity>
         </a-marker>
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-diadem.patt" id="M5">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
@@ -935,15 +951,18 @@
             <a-entity light="type: point; intensity: 50; distance: 5; decay: 10" position="0.25 -0.5 1"></a-entity> -->
             <!-- <a-entity light="type: spot; angle: 70; intensity:50" position="0 15 20"></a-entity> -->
             <!-- animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true" -->
-            <a-entity id="Model_M5" gltf-model="resources\models\diadem2.glb" rotation='0 0 0' scale='0 0 0'
+            <a-entity id="Model_M5" gltf-model="resources\models\diadem2.glb" rotation='0 0 0' scale='0 0 0' position="0 .35 0"
                 animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
-                animation__2="property: scale; to:0.01 0.01 0.01; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__2="property: scale; to:0.007 0.007 0.007; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
 
-            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+            <a-entity id="Model_M5_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+                animation-mixer="loop: repeat" scale="0 0 0"
+                animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
 
-            </a-entity> -->
+            </a-entity>
         </a-marker>
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-snake.patt" id="M6">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
@@ -951,15 +970,18 @@
         animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
     </a-torus-knot>
     </a-box> -->
-            <a-entity id="Model_M6" gltf-model="resources\models\snake.glb" position='-1 0 1' rotation='0 0 0'
+            <a-entity id="Model_M6" gltf-model="resources\models\snake2.glb" position='0 0.25 0' rotation='0 0 0'
                 scale='0 0 0' elasticity="1000"
-                animation__2="property: scale; to:1 1 1; dur: 1000 easing: easeOutElastic; startEvents: popup;"
+                animation__2="property: scale; to:0.8 0.8 0.8; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
 
-            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+            <a-entity id="Model_M6_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+                animation-mixer="loop: repeat" scale="0 0 0"
+                animation__2="property: scale; to:0.8 0.8 0.8; dur: 500 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 2000 easing: easeInElastic; startEvents: popout;">
 
-            </a-entity> -->
+            </a-entity>
         </a-marker>
         <a-marker registerevents preset='custom' type='pattern' url="resources\markersQr\pattern-harry.patt" id="M7">
             <!-- <a-sphere position='0 0.5 0' material='opacity: 0.5; side:double; color:white;'>
@@ -973,9 +995,12 @@
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
 
-            <!-- <a-entity gltf-model="resources\models\Portal\portal_anim.gltf" animation-mixer="loop: repeat" scale="0.7 0.7 0.7">
+            <a-entity id="Model_M7_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+                animation-mixer="loop: repeat" scale="0 0 0"
+                animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
+                animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
 
-            </a-entity> -->
+            </a-entity>
         </a-marker>
         <!-- <a-camera-static/> -->
         <a-entity camera></a-entity>

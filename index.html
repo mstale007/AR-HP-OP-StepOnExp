@@ -7,7 +7,8 @@
 5. You have found Clue01! Clue01
  -->
 <!-- To Do:
-1. Store
+1. Safari
+2. 
  -->
 <html>
 <meta name="viewport"
@@ -87,6 +88,7 @@
       for (var key in store_options) {
         var new_option = document.createElement("option");
         new_option.value = key;
+        new_option.label = key;
         new_option.innerHTML = key;
         // new_option.style="color: white;";
         city_dropdown.appendChild(new_option);
@@ -174,6 +176,7 @@
         for (var ele in store_options[selected_city]) {
           var new_option = document.createElement("option");
           new_option.value = store_options[selected_city][ele];
+          new_option.label = store_options[selected_city][ele];
           new_option.innerHTML = store_options[selected_city][ele];
           city_dropdown.appendChild(new_option);
         }
