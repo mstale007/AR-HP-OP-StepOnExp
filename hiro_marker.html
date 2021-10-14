@@ -228,9 +228,53 @@
                         setTimeout(function () {
                             document.querySelector(model_name).emit('popout', null, false);
                             document.querySelector(portal_name).emit('popout', null, false);
+
+                            var all_found = true;
+                            for (let index = 0; index < markers_found.length; index++) {
+                                if (markers_found[index] === false) {
+                                    all_found = false;
+                                }
+                            }
+                            // console.log(markers_found);
+
+                            if (all_found) {
+                                //Win!!
+                                game_finished = true;
+
+                                document.getElementById("clue-number").innerHTML = "All Found. Great Job!";
+                                document.getElementById("clue-description").innerHTML = "";
+                                closeNav();
+                                document.getElementById('win-popup').style.display = 'flex';
+                                document.getElementById('wp-img').src = "resources/images/voldemort.png"
+                                document.getElementById('wp-text').innerHTML = "Yay! You did it";
+
+                                var now = new Date().getTime();
+                                var distance = now - startTime;
+                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+
+                                if (user_time_elapsed === "") {
+                                    var total_time = minutes * 60 + parseInt(seconds);
+                                }
+                                else {
+                                    var total_time = (minutes * 60) + parseInt(seconds) + parseInt(user_time_elapsed);
+                                }
+                                // console.log("Everythong score related", minutes, seconds, user_time_elapsed, total_time);
+                                setTimeout(function () {
+                                    document.getElementById('win-popup').style.opacity = 1;
+                                    setTimeout(function () {
+                                        update_and_redirect('win', total_time);
+                                    }, 5000)
+                                }, 4000);
+                            }
+                        }, 7500);
+
+                        //Add Image 
+                        setTimeout(function () {
                             var indicator = document.querySelector(indicator_name);
                             indicator.innerHTML = img_src[marker_number - 1];
-                        }, 7500);
+                        }, 6000);
 
                         //Found Popup
                         document.querySelector('#found_popup').style.display = 'flex';
@@ -255,7 +299,8 @@
 
                     //Update UI
                     document.getElementById("clue-number").innerHTML = clue_title[marker_number - 1];
-                    document.getElementById("clue-description").innerHTML = clues[marker_number - 1];
+                    document.getElementById("clue-description").innerHTML = "Click on clue number to get it's description";
+                    // document.getElementById("clue-description").innerHTML = clues[marker_number - 1];
 
                     if (nav_closed) {
                         var translate_height = parseInt(document.getElementById("bottom-drawer").offsetHeight) - parseInt((document.getElementById("collapsebutton").offsetHeight) + parseInt(document.getElementById("clue-number").offsetHeight) + parseInt(document.getElementById("clue-description").offsetHeight));
@@ -275,42 +320,45 @@
                     // indicator.innerHTML = img_src[marker_number - 1];
                     indicator.style.boxShadow = "rgba(158, 248, 221, 1) 0px 0px 20px";
 
-                    var all_found = true;
-                    for (let index = 0; index < markers_found.length; index++) {
-                        if (markers_found[index] === false) {
-                            all_found = false;
-                        }
-                    }
-                    // console.log(markers_found);
+                    // var all_found = true;
+                    // for (let index = 0; index < markers_found.length; index++) {
+                    //     if (markers_found[index] === false) {
+                    //         all_found = false;
+                    //     }
+                    // }
+                    // // console.log(markers_found);
 
-                    if (all_found) {
-                        //Win!!
-                        game_finished = true;
-                        document.getElementById('win-popup').style.display = 'flex';
-                        document.getElementById('wp-img').src = "resources/images/voldemort.png"
-                        document.getElementById('wp-text').innerHTML = "Yay! You did it";
-
-                        var now = new Date().getTime();
-                        var distance = now - startTime;
-                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    // if (all_found) {
+                    //     //Win!!
+                    //     game_finished = true;
 
 
-                        if (user_time_elapsed === "") {
-                            var total_time = minutes * 60 + parseInt(seconds);
-                        }
-                        else {
-                            var total_time = (minutes * 60) + parseInt(seconds) + parseInt(user_time_elapsed);
-                        }
-                        // console.log("Everythong score related", minutes, seconds, user_time_elapsed, total_time);
-                        setTimeout(function () {
-                            document.getElementById('win-popup').style.opacity = 1;
-                            setTimeout(function () {
-                                update_and_redirect('win', total_time);
-                            }, 5000)
-                        }, 4000);
+                    //     closeNav();
+                    //     document.getElementById('win-popup').style.display = 'flex';
+                    //     document.getElementById('wp-img').src = "resources/images/voldemort.png"
+                    //     document.getElementById('wp-text').innerHTML = "Yay! You did it";
 
-                    }
+                    //     var now = new Date().getTime();
+                    //     var distance = now - startTime;
+                    //     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    //     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+
+                    //     if (user_time_elapsed === "") {
+                    //         var total_time = minutes * 60 + parseInt(seconds);
+                    //     }
+                    //     else {
+                    //         var total_time = (minutes * 60) + parseInt(seconds) + parseInt(user_time_elapsed);
+                    //     }
+                    //     // console.log("Everythong score related", minutes, seconds, user_time_elapsed, total_time);
+                    //     setTimeout(function () {
+                    //         document.getElementById('win-popup').style.opacity = 1;
+                    //         setTimeout(function () {
+                    //             update_and_redirect('win', total_time);
+                    //         }, 5000)
+                    //     }, 4000);
+                    // }
+
                     if (!first_marker_found) {
                         first_marker_found = true;
                         // sessionStorage.setItem('op-hp-ar-user-' + user_id + '-timerstared', true);
@@ -333,7 +381,12 @@
 
         function button_click(number) {
             document.getElementById("clue-number").innerHTML = clue_title[number - 1];
-            document.getElementById("clue-description").innerHTML = clues[number - 1];
+            if (markers_found[number - 1] === false) {
+                document.getElementById("clue-description").innerHTML = clues[number - 1];
+            }
+            else {
+                document.getElementById("clue-description").innerHTML = "Click on clue number to get it's description";
+            }
         }
 
         function start_timer(time_elapsed = 0) {
@@ -820,7 +873,7 @@
         <div class="collapsebutton" id="collapsebutton"><span class="material-icons" id="toggleslide"
                 onclick="closeNav()">expand_more</span>
         </div>
-        <div id="clue-number" style="font-size: 24px; font-weight: normal; color: #C59D62;">Clues</div>
+        <div id="clue-number" style="font-size: 24px; font-weight: normal; color: #C59D62;">Let's Go!</div>
         <div id="clue-description">Click on clue number to get it's description</div>
         <div class="container">
             <!-- <div class="item_bg"><img src="resources/images/reveal_effect.png"></div> -->
@@ -865,7 +918,7 @@
                     animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true">
                 </a-torus-knot>
             </a-box> -->
-            <a-entity id="Model_M1" gltf-model="resources\models\diary.glb" position="0 .5 0" rotation='0 -45 0'
+            <a-entity id="Model_M1" gltf-model="resources\models\diary2.glb" position="0 .5 0" rotation='0 -45 0'
                 scale='0 0 0' animation="property: rotation; to:0 -45 360; dur: 10000; easing: linear; loop: true"
                 animation__2="property: scale; to:0.5 0.5 0.5; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
@@ -875,7 +928,7 @@
                 animation-mixer="loop: repeat" scale="0 0 0"
                 animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;"
-                material = "emissive:yellow;emissiveIntensity:10">
+                material="emissive:yellow;emissiveIntensity:10">
 
             </a-entity>
 
@@ -887,8 +940,8 @@
                     animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
                 </a-torus-knot>
                 </a-box> -->
-            <a-entity id="Model_M2" gltf-model="resources\models\ring2.glb" rotation='0 0 0' scale='0 0 0' position="0 .25 0"
-                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
+            <a-entity id="Model_M2" gltf-model="resources\models\ring2.glb" rotation='0 0 0' scale='0 0 0'
+                position="0 .25 0" animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
                 animation__2="property: scale; to:0.07 0.07 0.07; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
                 <!-- <a-entity light="type: point; intensity: 1; distance: 50; decay: 2" position="0 0 0"></a-entity> -->
@@ -929,8 +982,8 @@
                 animation="property: rotation; to:360 0 0; dur: 10000; easing: linear; loop: true">
             </a-torus-knot>
             </a-box> -->
-            <a-entity id="Model_M4" gltf-model="resources\models\cup2.glb" rotation='0 0 0' scale='0 0 0' position="0 .05 0"
-                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
+            <a-entity id="Model_M4" gltf-model="resources\models\cup2.glb" rotation='0 0 0' scale='0 0 0'
+                position="0 .05 0" animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
                 animation__2="property: scale; to:10 10 10; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
@@ -952,8 +1005,8 @@
             <a-entity light="type: point; intensity: 50; distance: 5; decay: 10" position="0.25 -0.5 1"></a-entity> -->
             <!-- <a-entity light="type: spot; angle: 70; intensity:50" position="0 15 20"></a-entity> -->
             <!-- animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true" -->
-            <a-entity id="Model_M5" gltf-model="resources\models\diadem2.glb" rotation='0 0 0' scale='0 0 0' position="0 .35 0"
-                animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
+            <a-entity id="Model_M5" gltf-model="resources\models\diadem2.glb" rotation='0 0 0' scale='0 0 0'
+                position="0 .35 0" animation="property: rotation; to:0 360 0; dur: 10000; easing: linear; loop: true"
                 animation__2="property: scale; to:0.007 0.007 0.007; dur: 1000 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
