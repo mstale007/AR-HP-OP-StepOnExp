@@ -337,7 +337,7 @@
         }
 
         function start_timer(time_elapsed = 0) {
-            console.log("start_timer called: " + time_elapsed);
+            // console.log("start_timer called: " + time_elapsed);
             startTime = new Date().getTime();
             endTime = new Date(parseInt(startTime) + parseInt(time_limit * 60000) - ((parseInt(time_elapsed)) * 1000));
             setInterval(function () {
@@ -357,7 +357,7 @@
                     var time_elapsed_local = minutes_left * 60 + parseInt(seconds_left);
                     var time_elapsed_local2 = time_limit * 60 - parseInt(time_elapsed_local);
                     // sessionStorage.setItem('op-hp-ar-user-' + user_id + '-timerelapsed', tmp);
-                    console.log("Saving Time elapse: " + time_elapsed_local2 + " Time Limit: " + time_limit + " Time elapsed Local: " + time_elapsed_local);
+                    // console.log("Saving Time elapse: " + time_elapsed_local2 + " Time Limit: " + time_limit + " Time elapsed Local: " + time_elapsed_local);
                     if (time_elapsed_local2 >= 0) {
                         setCookie('op-hp-ar-user-' + user_id + '-timerelapsed', time_elapsed_local2, 365);
                     }
@@ -871,10 +871,11 @@
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
                 <!-- "property: scale; to:0.5 0.5 0.5; dur: "+popup_animation_time+"; easing: easeOutElastic;" -->
             </a-entity>
-            <a-entity id="Model_M1_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+            <a-entity id="Model_M1_Portal" gltf-model="resources\models\Portal\portal_bright_yellow.gltf"
                 animation-mixer="loop: repeat" scale="0 0 0"
                 animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
-                animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
+                animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;"
+                material = "emissive:yellow;emissiveIntensity:10">
 
             </a-entity>
 
@@ -893,7 +894,7 @@
                 <!-- <a-entity light="type: point; intensity: 1; distance: 50; decay: 2" position="0 0 0"></a-entity> -->
             </a-entity>
 
-            <a-entity id="Model_M2_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+            <a-entity id="Model_M2_Portal" gltf-model="resources\models\Portal\portal_bright_yellow.gltf"
                 animation-mixer="loop: repeat" scale="0 0 0"
                 animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
@@ -915,7 +916,7 @@
 
             </a-entity>
 
-            <a-entity id="Model_M3_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+            <a-entity id="Model_M3_Portal" gltf-model="resources\models\Portal\portal_bright_yellow.gltf"
                 animation-mixer="loop: repeat" scale="0 0 0"
                 animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
@@ -934,7 +935,7 @@
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
 
-            <a-entity id="Model_M4_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+            <a-entity id="Model_M4_Portal" gltf-model="resources\models\Portal\portal_bright_yellow.gltf"
                 animation-mixer="loop: repeat" scale="0 0 0"
                 animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
@@ -957,7 +958,7 @@
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
 
-            <a-entity id="Model_M5_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+            <a-entity id="Model_M5_Portal" gltf-model="resources\models\Portal\portal_bright_yellow.gltf"
                 animation-mixer="loop: repeat" scale="0 0 0"
                 animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
@@ -976,7 +977,7 @@
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
 
-            <a-entity id="Model_M6_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+            <a-entity id="Model_M6_Portal" gltf-model="resources\models\Portal\portal_bright_yellow.gltf"
                 animation-mixer="loop: repeat" scale="0 0 0"
                 animation__2="property: scale; to:0.8 0.8 0.8; dur: 500 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 2000 easing: easeInElastic; startEvents: popout;">
@@ -995,7 +996,7 @@
                 animation__3="property: scale; to:0 0 0; dur: 1000 easing: easeInElastic; startEvents: popout;">
             </a-entity>
 
-            <a-entity id="Model_M7_Portal" gltf-model="resources\models\Portal\portal_final.gltf"
+            <a-entity id="Model_M7_Portal" gltf-model="resources\models\Portal\portal_bright_yellow.gltf"
                 animation-mixer="loop: repeat" scale="0 0 0"
                 animation__2="property: scale; to:0.7 0.7 0.7; dur: 500 easing: easeOutElastic; startEvents: popup;"
                 animation__3="property: scale; to:0 0 0; dur: 1500 easing: easeInElastic; startEvents: popout;">
