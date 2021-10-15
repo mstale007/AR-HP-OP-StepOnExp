@@ -266,7 +266,7 @@
                                     setTimeout(function () {
                                         update_and_redirect('win', total_time);
                                     }, 5000)
-                                }, 4000);
+                                }, 3000);
                             }
                         }, 7500);
 
@@ -421,6 +421,10 @@
                     document.getElementById('win-popup').style.display = 'flex';
                     document.getElementById('wp-img').src = "resources/images/voldemort_laugh2.png";
                     document.getElementById('wp-text').innerHTML = "Oh No! Timeout";
+
+                    document.getElementById("clue-number").innerHTML = "Time's Up!";
+                    document.getElementById("clue-description").innerHTML = "";
+                    closeNav();
                     setTimeout(function () {
                         document.getElementById('win-popup').style.opacity = 1;
                         setTimeout(function () {
