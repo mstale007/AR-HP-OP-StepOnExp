@@ -158,7 +158,7 @@
                     game_finished = true;
                     document.getElementById('win-popup').style.display = 'flex';
                     document.getElementById('wp-img').src = "resources/images/voldemort.png"
-                    document.getElementById('wp-text').innerHTML = "Yay! You did it";
+                    document.getElementById('wp-text').innerHTML = "Yay! You did it<br>Please wait till we save your score<br>Don't refresh the page";
 
                     var now = new Date().getTime();
                     var distance = now - startTime;
@@ -246,7 +246,7 @@
                                 closeNav();
                                 document.getElementById('win-popup').style.display = 'flex';
                                 document.getElementById('wp-img').src = "resources/images/voldemort.png"
-                                document.getElementById('wp-text').innerHTML = "Yay! You did it";
+                                document.getElementById('wp-text').innerHTML = "Yay! You did it<br>Please wait till we save your score<br>Don't refresh the page";
 
                                 var now = new Date().getTime();
                                 var distance = now - startTime;
@@ -299,7 +299,7 @@
 
                     //Update UI
                     document.getElementById("clue-number").innerHTML = clue_title[marker_number - 1];
-                    document.getElementById("clue-description").innerHTML = "Click on clue number to get it's description";
+                    document.getElementById("clue-description").innerHTML = "Click on any of the boxes below to unlock a clue";
                     // document.getElementById("clue-description").innerHTML = clues[marker_number - 1];
 
                     if (nav_closed) {
@@ -385,7 +385,7 @@
                 document.getElementById("clue-description").innerHTML = clues[number - 1];
             }
             else {
-                document.getElementById("clue-description").innerHTML = "Click on clue number to get it's description";
+                document.getElementById("clue-description").innerHTML = "Click on any of the boxes below to unlock a clue";
             }
         }
 
@@ -420,7 +420,7 @@
                     //Lost
                     document.getElementById('win-popup').style.display = 'flex';
                     document.getElementById('wp-img').src = "resources/images/voldemort_laugh2.png";
-                    document.getElementById('wp-text').innerHTML = "Oh No! Timeout";
+                    document.getElementById('wp-text').innerHTML = "Oh No! Timeout<br>Please wait till we save your score<br>Don't refresh the page";
 
                     document.getElementById("clue-number").innerHTML = "Time's Up!";
                     document.getElementById("clue-description").innerHTML = "";
@@ -858,7 +858,7 @@
     <div id="win-popup" style="display: none;">
         <div id=wp-bg>
             <img id="wp-img" src="resources/images/voldemort.png">
-            <p id="wp-text">Yay! You did it</p>
+            <p id="wp-text">Yay! You did it<br>Please wait till we save your score<br>Don't refresh the page</p>
         </div>
     </div>
     <!--Timer Bar-->
@@ -878,7 +878,7 @@
                 onclick="closeNav()">expand_more</span>
         </div>
         <div id="clue-number" style="font-size: 24px; font-weight: normal; color: #C59D62;">Let's Go!</div>
-        <div id="clue-description">Click on clue number to get it's description</div>
+        <div id="clue-description">Click on any of the boxes below to unlock a clue</div>
         <div class="container">
             <!-- <div class="item_bg"><img src="resources/images/reveal_effect.png"></div> -->
             <div>
