@@ -164,12 +164,13 @@
                     var distance = now - startTime;
                     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    var milliseconds = Math.floor((distance % (1000)));
 
                     if (user_time_elapsed === "") {
-                        var total_time = minutes * 60 + parseInt(seconds);
+                        var total_time = minutes * 60 * 1000 + parseInt(seconds) * 1000 + parseInt(milliseconds);
                     }
                     else {
-                        var total_time = minutes * 60 + parseInt(seconds) + parseInt(user_time_elapsed);
+                        var total_time = minutes * 60 * 1000 + parseInt(seconds) * 1000 + parseInt(user_time_elapsed) + parseInt(milliseconds);
                     }
                     // console.log("Everythong score related", minutes, seconds, user_time_elapsed, total_time);
                     setTimeout(function () {
@@ -252,13 +253,13 @@
                                 var distance = now - startTime;
                                 var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
+                                var milliseconds = Math.floor((distance % (1000)));
 
                                 if (user_time_elapsed === "") {
-                                    var total_time = minutes * 60 + parseInt(seconds);
+                                    var total_time = minutes * 60 * 1000 + parseInt(seconds) * 1000 + parseInt(milliseconds);
                                 }
                                 else {
-                                    var total_time = (minutes * 60) + parseInt(seconds) + parseInt(user_time_elapsed);
+                                    var total_time = minutes * 60 * 1000 + parseInt(seconds) * 1000 + parseInt(user_time_elapsed) + parseInt(milliseconds);
                                 }
                                 // console.log("Everythong score related", minutes, seconds, user_time_elapsed, total_time);
                                 setTimeout(function () {
@@ -392,13 +393,14 @@
         function start_timer(time_elapsed = 0) {
             // console.log("start_timer called: " + time_elapsed);
             startTime = new Date().getTime();
-            endTime = new Date(parseInt(startTime) + parseInt(time_limit * 60000) - ((parseInt(time_elapsed)) * 1000));
+            endTime = new Date(parseInt(startTime) + parseInt(time_limit * 60 * 1000) - ((parseInt(time_elapsed))));
             setInterval(function () {
                 var now = new Date().getTime();
 
                 var distance_left = endTime - now;
                 var minutes_left = Math.floor((distance_left % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds_left = Math.floor((distance_left % (1000 * 60)) / 1000);
+                var milliseconds_left = Math.floor((distance_left % (1000)));
 
                 // console.log(distance_left);
                 // if(seconds_left===0 || seconds_left===15 || seconds_left===30 || seconds_left===45){
@@ -406,9 +408,15 @@
                 if (minutes_left >= 0 && seconds_left >= 0 && !game_finished) {
                     minutes_left = minutes_left < 10 ? "0" + minutes_left : minutes_left;
                     seconds_left = seconds_left < 10 ? "0" + seconds_left : seconds_left;
+                    if (milliseconds_left < 10) {
+                        milliseconds_left = "00" + milliseconds_left;
+                    }
+                    else if (milliseconds_left < 100) {
+                        milliseconds_left = "0" + milliseconds_left;
+                    }
                     document.getElementById("timercounter").innerHTML = minutes_left.toString() + ":" + seconds_left.toString();
-                    var time_elapsed_local = minutes_left * 60 + parseInt(seconds_left);
-                    var time_elapsed_local2 = time_limit * 60 - parseInt(time_elapsed_local);
+                    var time_elapsed_local = minutes_left * 60 * 1000 + parseInt(seconds_left) * 1000 + parseInt(milliseconds_left);
+                    var time_elapsed_local2 = time_limit * 60 * 1000 - parseInt(time_elapsed_local);
                     // sessionStorage.setItem('op-hp-ar-user-' + user_id + '-timerelapsed', tmp);
                     // console.log("Saving Time elapse: " + time_elapsed_local2 + " Time Limit: " + time_limit + " Time elapsed Local: " + time_elapsed_local);
                     if (time_elapsed_local2 >= 0) {
@@ -428,7 +436,7 @@
                     setTimeout(function () {
                         document.getElementById('win-popup').style.opacity = 1;
                         setTimeout(function () {
-                            update_and_redirect('lost', time_limit * 60);
+                            update_and_redirect('lost', time_limit * 60 * 1000);
                         }, 5000)
                     }, 50);
                 }

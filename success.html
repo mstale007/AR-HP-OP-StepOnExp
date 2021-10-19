@@ -44,9 +44,18 @@
             if (score === "") {
                 score = -1;
             }
-            var minutes = Math.floor(score / 60);
-            var seconds = score % 60;
-            var padded_time = minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+            var minutes = Math.floor((score % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((score % (1000 * 60)) / 1000);
+            var milliseconds = Math.floor((score % (1000)));
+
+            if (milliseconds < 10) {
+                milliseconds = "00" + milliseconds;
+            }
+            else if (milliseconds < 100) {
+                milliseconds = "0" + milliseconds;
+            }
+
+            var padded_time = minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0")+":"+milliseconds.toString().slice(0,2);
             var score_text = "in ";
             document.getElementById("user_congrats").innerHTML = "Congratulations! " + username;
 
